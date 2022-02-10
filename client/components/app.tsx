@@ -3,9 +3,7 @@ import logger from '../logger';
 
 const log = logger('app');
 
-function App() {
+export const App = () => {
   log.info('Rendering main app');
   return <p>Hello from Client</p>;
-}
-
-export default App;
+};

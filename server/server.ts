@@ -29,6 +29,10 @@ server.get('/', (req, res) => {
   res.render('client', { assets, component });
 });
 
+server.get('/api/search', (req, res) => {
+  log.info(`searching`);
+});
+
 server.listen(port, () => {
   log.info(`Server running on http://localhost:${port}`);
 });

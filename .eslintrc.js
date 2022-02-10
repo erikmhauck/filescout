@@ -22,6 +22,9 @@ module.exports = {
     'prettier/prettier': 'error',
   },
   settings: {
+    react: {
+      version: 'detect', // React version. "detect" automatically picks the version you have installed.
+    },
     'import/resolver': {
       node: {
         extensions: ['.js', '.jsx', '.ts', '.tsx'],

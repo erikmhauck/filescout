@@ -10,9 +10,9 @@
     "target": "es6", // compile to ES6
     "jsx": "react", // compile JSX to React.createElement statements for SSR
     "allowJs": true, // allow import of JS modules
-     // enable strict type checking
+    // enable strict type checking
     "strict": true,
     "strictNullChecks": true,
-    "noImplicitAny": true,
+    "noImplicitAny": true
   }
 }
