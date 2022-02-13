@@ -1,5 +1,9 @@
 FROM node:16
 
+WORKDIR /tmp
+COPY package.json /tmp/
+RUN yarn install
+
 # Create app directory
 WORKDIR /usr/src/app
 
@@ -9,7 +13,7 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 COPY tsconfig.*.json ./
 COPY webpack.config.*.js ./
-RUN npm install
+RUN cp -a /tmp/node_modules /usr/src/app/
 
 COPY server/ ./server
 COPY client/ ./client

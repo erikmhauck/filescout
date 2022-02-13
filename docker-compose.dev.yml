@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+ filescout:
+  build:
+   context: .
+  ports:
+   - 8080:8080
+   - 9229:9229
+  environment:
+   - SERVER_PORT=8080
+   - CONNECTIONSTRING=mongodb://mongo:27017/notes
+   - NODE_ENV=dev
+  volumes:
+   - .:/usr/src/app/:rw
+  command: >
+      sh -c '
+      if test -d node_modules;
+      then
+        echo node_modules_exists ;
+      else
+        cp -a /tmp/node_modules /usr/src/app/docker_node_modules;
+      fi && 
+      yarn install && 
+      /usr/local/bin/node ./dev.js
+      '
+ mongo:
+  image: mongo:4.2.8
+  ports:
+   - 27017:27017
+  volumes:
+   - mongodb:/data/db
+   - mongodb_config:/data/configdb
+volumes:
+ mongodb:
+ mongodb_config:
