@@ -6,9 +6,11 @@ import ReactDOMServer from 'react-dom/server';
 import { App } from '../client/components/app';
 import logger from './logger';
 import { Database } from './database/db';
+import { Scanner } from './scanner/scanner';
 
 const log = logger('server');
 const db = new Database(process.env.CONNECTIONSTRING);
+const scanner = new Scanner(db);
 
 const port = 8080;
 
@@ -35,10 +37,18 @@ server.get('/api/search', (req, res) => {
   log.info(`searching`);
 });
 
+server.get('/api/add', (req, res) => {
+  log.info(`adding`);
+  scanner.indexPath('/usr/src/app/.vscode');
+});
+
 const test_db = async () => {
   log.info(`querying db`);
-  const res = await db.query('foo');
-  log.info(`got ${res} from db`);
+  let res = await db.query('launch.json');
+  log.info(`got ${JSON.stringify(res)} from db`);
+  await scanner.indexPath('/usr/src/app/.vscode');
+  res = await db.query('/usr/src/app/.vscode/launch.json');
+  log.info(`got ${JSON.stringify(res)} from db`);
 };
 
 server.listen(port, () => {
