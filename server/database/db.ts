@@ -20,7 +20,6 @@ export class Database {
 
   async Connect() {
     if (this.client != null) {
-      console.log(`db connection is already alive`);
       return this.client;
     } else {
       console.log(`getting new db connection`);
@@ -58,12 +57,14 @@ export class Database {
   }
 
   async query(queryString: string) {
+    const start = new Date().getMilliseconds();
     log.info(`querying: ${queryString}`);
     const filesCollection = await this.getFilesCollection();
     if (filesCollection) {
-      const query = { path: queryString };
-      const result = await filesCollection.findOne(query);
-      log.info(`got: ${result}`);
+      const query = { path: { $regex: `.*${queryString}.*`, $options: 'i' } };
+      const result = await filesCollection.find(query).toArray();
+      const end = new Date().getMilliseconds() - start;
+      log.info(`got: ${result.length} results in ${end} ms`);
       return result;
     } else {
       log.error(`Could not get filesCollection`);
