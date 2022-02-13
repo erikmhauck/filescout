@@ -1,7 +1,4 @@
 import React from 'react';
-import logger from '../logger';
-
-const log = logger('search');
 
 interface SearchProps {
   executeSearch: (query: string) => Promise<void>;

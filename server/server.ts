@@ -5,8 +5,6 @@ import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import { App } from '../client/components/app';
 import logger from './logger';
-import { Database } from './database/db';
-import { Scanner } from './scanner/scanner';
 import api from './routes/api';
 
 const log = logger('server');
@@ -33,16 +31,6 @@ server.get('/', (req, res) => {
   res.render('client', { assets, component });
 });
 
-// const test_db = async () => {
-//   log.info(`querying db`);
-//   let res = await db.query('launch.json');
-//   log.info(`got ${JSON.stringify(res)} from db`);
-//   await scanner.indexPath('/usr/src/app/.vscode');
-//   res = await db.query('/usr/src/app/.vscode/launch.json');
-//   log.info(`got ${JSON.stringify(res)} from db`);
-// };
-
 server.listen(port, () => {
   log.info(`Server running on http://localhost:${port}`);
-  // test_db();
 });
