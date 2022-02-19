@@ -1,8 +1,9 @@
 import { Database } from '../database/db';
 import logger from '../logger';
-import fs from 'fs';
+import { getRootDirs, recursiveWalk } from './scanner_utils';
 
 const log = logger('scanner');
+const rootOfAllScanDirs = '/scan';
 
 export interface FileDocument {
   path: string;
@@ -13,29 +14,22 @@ export class Scanner {
   db: Database;
   constructor(db: Database) {
     this.db = db;
+    this.init();
   }
 
-  async walk(
-    targetPath: string,
-    files_?: FileDocument[]
-  ): Promise<FileDocument[]> {
-    files_ = files_ || [];
-    var files = fs.readdirSync(targetPath);
-    for (let i = 0; i < files.length; i += 1) {
-      var name = targetPath + '/' + files[i];
-      if (fs.statSync(name).isDirectory()) {
-        log.info(`recursing into ${name}`);
-        await this.walk(name, files_);
-      } else {
-        files_.push({ path: name });
-      }
-    }
-    return files_;
+  async walk(targetPath: string): Promise<FileDocument[]> {
+    return await recursiveWalk(targetPath);
   }
 
   async indexPath(targetPath: string) {
     log.info(`indexing ${targetPath}`);
     const allFiles = await this.walk(targetPath);
     await this.db.insertMany(allFiles);
+  }
+
+  async init() {
+    log.info(`initializing scanner`);
+    const rootDirs = getRootDirs(rootOfAllScanDirs);
+    log.info(JSON.stringify(rootDirs));
   }
 }
