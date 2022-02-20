@@ -1,3 +1,4 @@
+import { exec } from 'child_process';
 import React from 'react';
 
 interface SearchProps {
@@ -9,8 +10,13 @@ export const Search = ({ executeSearch }: SearchProps) => {
   return (
     <div>
       <h2>Search:</h2>
-      <input onChange={(e) => setQueryString(e.target.value)}></input>
-      <button onClick={() => executeSearch(queryString)}>submit</button>
+      <input
+        onKeyPress={(e) =>
+          e.key === 'Enter' ? executeSearch(queryString) : () => {}
+        }
+        onChange={(e) => setQueryString(e.target.value)}
+      />
+      <button onClick={() => executeSearch(queryString)}>search</button>
     </div>
   );
 };

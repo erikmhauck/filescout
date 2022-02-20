@@ -24,4 +24,10 @@ router.get('/roots', async (req, res) => {
   res.send(roots);
 });
 
+router.post('/root', async (req, res) => {
+  const root = await db.getRoot(req.body.name);
+  console.log(JSON.stringify(root));
+  res.send(root);
+});
+
 export default router;

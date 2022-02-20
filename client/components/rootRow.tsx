@@ -1,15 +1,41 @@
-import React from 'react';
+import React, { Dispatch } from 'react';
 import logger from '../logger';
 import RootResult from '../models/rootResult';
 
-const log = logger('roots');
+const log = logger('rootRow');
 
 interface RootRowProps {
   root: RootResult;
 }
 
-const useScanRoot = (isCurrentlyScanning: boolean) => {
-  const [scanning, setScanning] = React.useState(isCurrentlyScanning);
+const checkIfStillScanning = (
+  root: RootResult,
+  setScanning: Dispatch<React.SetStateAction<boolean>>
+) => {
+  let scanCheckInterval = setInterval(async () => {
+    log.info(`checking if still scanning`);
+
+    const queryBody = JSON.stringify({ name: root.name });
+    log.info(`searching: ${queryBody}`);
+    const response = await fetch('/api/root', {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+      body: queryBody,
+    });
+    const responseObj: RootResult = await response.json();
+
+    if (!responseObj.scanning) {
+      log.info(`done scanning`);
+      setScanning(false);
+      clearInterval(scanCheckInterval);
+    }
+  }, 2000);
+};
+
+const useScanRoot = (root: RootResult) => {
+  const [scanning, setScanning] = React.useState(root.scanning);
 
   const scanRoot = async (root: RootResult) => {
     log.info(`rescanning root: ${root.name}`);
@@ -23,6 +49,7 @@ const useScanRoot = (isCurrentlyScanning: boolean) => {
     });
     if (response.ok) {
       setScanning(true);
+      checkIfStillScanning(root, setScanning);
     }
   };
 
@@ -61,7 +88,7 @@ const timeSince = (date: Date) => {
 };
 
 export const RootRow = ({ root }: RootRowProps) => {
-  const { scanRoot, scanning, setScanning } = useScanRoot(root.scanning);
+  const { scanRoot, scanning } = useScanRoot(root);
   log.info(`Rendering results! ${JSON.stringify(root)}`);
 
   return (
