@@ -1,6 +1,6 @@
 import { readdirSync, statSync } from 'fs';
 import { join } from 'path';
-import { FileDocument } from './scanner';
+import { FileDocument } from '../../common/dataModels';
 
 export const rootOfAllScanDirs = '/scan';
 

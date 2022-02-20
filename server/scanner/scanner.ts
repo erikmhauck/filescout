@@ -1,23 +1,9 @@
-import { ObjectId } from 'mongodb';
+import { FileDocument, RootDocument } from '../../common/dataModels';
 import { Database } from '../database/db';
 import logger from '../logger';
 import { getRootDirs, recursiveWalk, rootOfAllScanDirs } from './scanner_utils';
 
 const log = logger('scanner');
-
-export interface FileDocument {
-  _id?: ObjectId;
-  root: string;
-  path: string;
-  contents?: string;
-}
-
-export interface RootDocument {
-  _id?: ObjectId;
-  name: string;
-  lastUpdated: Date;
-  fileCount: number;
-}
 
 export class Scanner {
   db: Database;
@@ -32,9 +18,14 @@ export class Scanner {
 
   async scanPath(targetPath: string) {
     let root = (await this.db.getRoot(targetPath)) as unknown as RootDocument;
+    if (root && root.scanning) {
+      log.info(`canceling scan of ${root.name}, is already scanning`);
+      return;
+    }
     log.info(`indexing ${targetPath}`);
     // do the scan
     const allFiles = await this.walk(targetPath);
+
     if (root && root._id) {
       // update the root if it exists
       await this.db.updateRoot(root._id, allFiles.length);

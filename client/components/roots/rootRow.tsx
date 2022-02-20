@@ -1,16 +1,18 @@
 import React, { Dispatch } from 'react';
-import logger from '../logger';
-import RootResult from '../models/rootResult';
+import { RootDocument } from '../../../common/dataModels';
+import logger from '../../logger';
 
 const log = logger('rootRow');
 
 interface RootRowProps {
-  root: RootResult;
+  root: RootDocument;
 }
 
 const checkIfStillScanning = (
-  root: RootResult,
-  setScanning: Dispatch<React.SetStateAction<boolean>>
+  root: RootDocument,
+  setScanning: Dispatch<React.SetStateAction<boolean>>,
+  setFileCount: Dispatch<React.SetStateAction<number>>,
+  setLastUpdated: Dispatch<React.SetStateAction<Date>>
 ) => {
   let scanCheckInterval = setInterval(async () => {
     log.info(`checking if still scanning`);
@@ -24,20 +26,24 @@ const checkIfStillScanning = (
       method: 'POST',
       body: queryBody,
     });
-    const responseObj: RootResult = await response.json();
+    const responseObj: RootDocument = await response.json();
 
     if (!responseObj.scanning) {
       log.info(`done scanning`);
       setScanning(false);
+      setFileCount(responseObj.fileCount);
+      setLastUpdated(responseObj.lastUpdated);
       clearInterval(scanCheckInterval);
     }
   }, 2000);
 };
 
-const useScanRoot = (root: RootResult) => {
+const useScanRoot = (root: RootDocument) => {
   const [scanning, setScanning] = React.useState(root.scanning);
+  const [fileCount, setFileCount] = React.useState(root.fileCount);
+  const [lastUpdated, setLastUpdated] = React.useState(root.lastUpdated);
 
-  const scanRoot = async (root: RootResult) => {
+  const scanRoot = async (root: RootDocument) => {
     log.info(`rescanning root: ${root.name}`);
     const queryBody = JSON.stringify({ path: root.name });
     const response = await fetch('/api/scan', {
@@ -49,11 +55,11 @@ const useScanRoot = (root: RootResult) => {
     });
     if (response.ok) {
       setScanning(true);
-      checkIfStillScanning(root, setScanning);
+      checkIfStillScanning(root, setScanning, setFileCount, setLastUpdated);
     }
   };
 
-  return { scanRoot, scanning, setScanning };
+  return { scanRoot, scanning, fileCount, lastUpdated };
 };
 
 const timeSince = (date: Date) => {
@@ -88,14 +94,14 @@ const timeSince = (date: Date) => {
 };
 
 export const RootRow = ({ root }: RootRowProps) => {
-  const { scanRoot, scanning } = useScanRoot(root);
-  log.info(`Rendering results! ${JSON.stringify(root)}`);
+  const { scanRoot, scanning, fileCount, lastUpdated } = useScanRoot(root);
+  log.info(`Rendering root row! ${JSON.stringify(root)}`);
 
   return (
     <div>
       <p>
-        <b>{root.name}</b> ({root.fileCount} files) - last updated{' '}
-        {timeSince(root.lastUpdated)} ago
+        <b>{root.name}</b> ({fileCount} files) - last updated{' '}
+        {timeSince(lastUpdated)} ago
       </p>
       {scanning && <p>scanning!</p>}
       <button onClick={() => scanRoot(root)}>re-scan</button>

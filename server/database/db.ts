@@ -1,6 +1,6 @@
 import { MongoClient, ObjectId } from 'mongodb';
 import logger from '../logger';
-import { FileDocument, RootDocument } from '../scanner/scanner';
+import { FileDocument, RootDocument } from '../../common/dataModels';
 
 const log = logger('database');
 

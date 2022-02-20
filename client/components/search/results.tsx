@@ -1,15 +1,15 @@
 import React from 'react';
-import logger from '../logger';
-import SearchResult from '../models/searchResult';
+import { FileDocument } from '../../../common/dataModels';
+import logger from '../../logger';
 
 const log = logger('results');
 
 interface ResultsProps {
-  results: SearchResult[];
+  results: FileDocument[];
 }
 
 export const Results = ({ results }: ResultsProps) => {
-  log.info('Rendering results!');
+  log.info(`Rendering ${results.length} search results!`);
 
   return (
     <div>
