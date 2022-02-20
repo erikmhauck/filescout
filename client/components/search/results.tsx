@@ -18,7 +18,9 @@ export const Results = ({ results }: ResultsProps) => {
           <h2>Results:</h2>
           <ul>
             {results.map((res) => (
-              <li key={res._id}>{res.path}</li>
+              <li key={res._id}>
+                {res.path} - {res.contents}
+              </li>
             ))}
           </ul>
         </div>

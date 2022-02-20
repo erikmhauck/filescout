@@ -2,6 +2,7 @@ import { FileDocument, RootDocument } from '../../common/dataModels';
 import { Database } from '../database/db';
 import logger from '../logger';
 import { getRootDirs, recursiveWalk, rootOfAllScanDirs } from './scanner_utils';
+import { join } from 'path';
 
 const log = logger('scanner');
 
@@ -13,7 +14,7 @@ export class Scanner {
   }
 
   async walk(targetPath: string): Promise<FileDocument[]> {
-    return await recursiveWalk(targetPath);
+    return await recursiveWalk(join(rootOfAllScanDirs, targetPath));
   }
 
   async scanPath(targetPath: string) {
@@ -60,14 +61,13 @@ export class Scanner {
   }
 
   async init() {
+    // !!!for debug!!!
+    // await this.db.deleteAll();
     log.info(`initializing scanner`);
     const rootDirs = getRootDirs(rootOfAllScanDirs);
     log.info(
       `Found ${rootDirs.length} root directories in the ${rootOfAllScanDirs} folder`
     );
-
-    // !!!for debug!!!
-    await this.db.deleteAll();
 
     for (let i = 0; i < rootDirs.length; i += 1) {
       const currentRootDir = this.getRootDirName(rootDirs[i]);

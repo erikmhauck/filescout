@@ -165,7 +165,10 @@ export class Database {
     log.info(`querying: ${queryString}`);
     const filesCollection = await this.getFilesCollection();
     if (filesCollection) {
-      const query = { path: { $regex: `.*${queryString}.*`, $options: 'i' } };
+      const queryRegex = { $regex: `.*${queryString}.*`, $options: 'i' };
+      const query = {
+        $or: [{ path: queryRegex }, { contents: queryRegex }],
+      };
       const result = await filesCollection.find(query).toArray();
       const end = new Date().getMilliseconds() - start;
       log.info(`got: ${result.length} results in ${end} ms`);

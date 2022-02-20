@@ -13,7 +13,8 @@ services:
    - NODE_ENV=dev
   volumes:
    - .:/usr/src/app/:rw
-   - ./test_data:/scan
+   - ./test_data/test_1:/scan/test_1
+   - ./test_data/test_2:/scan/test_2
   command: >
       sh -c '
       if test -d node_modules;
