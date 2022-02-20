@@ -8,18 +8,20 @@ const scanner = new Scanner(db);
 
 router.use(express.json());
 
-router.get('/', function (req, res) {
-  res.send('API home page');
-});
-
 router.post('/search', async (req, res) => {
   const searchResult = await db.query(req.body.query);
   res.send(JSON.stringify(searchResult));
 });
 
-router.post('/add', function (req, res) {
-  scanner.indexPath(req.body.path);
-  res.send('ok');
+router.post('/scan', function (req, res) {
+  scanner.scanPath(req.body.path);
+  res.sendStatus(200);
+});
+
+router.get('/roots', async (req, res) => {
+  const roots = await db.getAllRoots();
+  console.log(JSON.stringify(roots));
+  res.send(roots);
 });
 
 export default router;

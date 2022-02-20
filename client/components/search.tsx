@@ -8,7 +8,7 @@ export const Search = ({ executeSearch }: SearchProps) => {
   const [queryString, setQueryString] = React.useState('');
   return (
     <div>
-      <p>type query:</p>
+      <h2>Search:</h2>
       <input onChange={(e) => setQueryString(e.target.value)}></input>
       <button onClick={() => executeSearch(queryString)}>submit</button>
     </div>

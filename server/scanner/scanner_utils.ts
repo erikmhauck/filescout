@@ -2,6 +2,8 @@ import { readdirSync, statSync } from 'fs';
 import { join } from 'path';
 import { FileDocument } from './scanner';
 
+export const rootOfAllScanDirs = '/scan';
+
 export const getRootDirs = (rootOfAllScanDirs: string) => {
   const rootDirs = readdirSync(rootOfAllScanDirs, { withFileTypes: true })
     .filter((dirent) => dirent.isDirectory())
@@ -14,13 +16,15 @@ export const recursiveWalk = async (
   files_?: FileDocument[]
 ): Promise<FileDocument[]> => {
   files_ = files_ || [];
-  const files = readdirSync(targetPath);
+  const files = readdirSync(join(rootOfAllScanDirs, targetPath));
   for (let i = 0; i < files.length; i += 1) {
-    var name = targetPath + '/' + files[i];
+    const name = join(rootOfAllScanDirs, targetPath, files[i]);
     if (statSync(name).isDirectory()) {
+      // recurse
       await recursiveWalk(name, files_);
     } else {
-      files_.push({ path: name });
+      // append to array
+      files_.push({ path: targetPath + '/' + files[i], root: targetPath });
     }
   }
   return files_;

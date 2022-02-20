@@ -1,5 +1,6 @@
-import { MongoClient } from 'mongodb';
+import { MongoClient, ObjectId } from 'mongodb';
 import logger from '../logger';
+import { FileDocument, RootDocument } from '../scanner/scanner';
 
 const log = logger('database');
 
@@ -36,8 +37,62 @@ export class Database {
     }
   }
 
-  async insert(documentToInsert: any) {
-    log.info(`inserting: ${documentToInsert}`);
+  async getRootsCollection() {
+    await this.Connect();
+    if (this.client) {
+      const database = this.client.db('primary');
+      const rootsCollection = database.collection('roots');
+      return rootsCollection;
+    }
+  }
+
+  async deleteAllRoots() {
+    log.info(`Deleting all roots!!!`);
+    const rootsCollection = await this.getRootsCollection();
+    if (rootsCollection) {
+      rootsCollection.deleteMany({});
+    } else {
+      log.error(`Could not get rootsCollection`);
+    }
+  }
+
+  async deleteAllFiles() {
+    log.info(`Deleting all files!!!`);
+    const filesCollection = await this.getFilesCollection();
+    if (filesCollection) {
+      filesCollection.deleteMany({});
+    } else {
+      log.error(`Could not get rootsCollection`);
+    }
+  }
+
+  async deleteAll() {
+    await this.deleteAllFiles();
+    await this.deleteAllRoots();
+  }
+
+  async getAllRoots() {
+    const rootsCollection = await this.getRootsCollection();
+    if (rootsCollection) {
+      return rootsCollection.find({}).toArray();
+    } else {
+      log.error(`Could not get rootsCollection`);
+    }
+  }
+
+  async insertRoot(documentToInsert: any) {
+    log.info(`inserting root: ${JSON.stringify(documentToInsert)}`);
+    const rootsCollection = await this.getRootsCollection();
+    if (rootsCollection) {
+      return await rootsCollection.insertOne(documentToInsert);
+    } else {
+      log.error(`Could not get rootsCollection`);
+    }
+    return undefined;
+  }
+
+  async insertFile(documentToInsert: any) {
+    log.info(`inserting file: ${documentToInsert}`);
     const filesCollection = await this.getFilesCollection();
     if (filesCollection) {
       filesCollection.insertOne(documentToInsert);
@@ -46,14 +101,63 @@ export class Database {
     }
   }
 
-  async insertMany(documentsToInsert: any[]) {
-    log.info(`inserting: ${documentsToInsert.length} documents`);
+  async insertManyFiles(documentsToInsert: FileDocument[]) {
+    log.info(`inserting: ${documentsToInsert.length} files`);
     const filesCollection = await this.getFilesCollection();
     if (filesCollection) {
       filesCollection.insertMany(documentsToInsert);
     } else {
       log.error(`Could not get filesCollection`);
     }
+  }
+
+  async deleteAllFilesFromRoot(root: RootDocument) {
+    log.info(`deleting files with root: ${root.name}`);
+    const filesCollection = await this.getFilesCollection();
+    if (filesCollection) {
+      filesCollection.deleteMany({ root: root.name });
+    } else {
+      log.error(`Could not get filesCollection`);
+    }
+  }
+
+  async getRoot(rootName: string) {
+    const rootsCollection = await this.getRootsCollection();
+
+    if (rootsCollection) {
+      const query = { name: rootName };
+      const result = await rootsCollection.findOne(query);
+      if (result) {
+        log.info(`found ${JSON.stringify(result)}`);
+        return result;
+      } else {
+        log.info(`${rootName} does not exist`);
+      }
+    } else {
+      log.error(`Could not get rootsCollection`);
+    }
+    return undefined;
+  }
+
+  async updateRoot(id: ObjectId, fileCount: number) {
+    log.info(`Updating root with ${id} to have ${fileCount} files`);
+    const rootsCollection = await this.getRootsCollection();
+    if (rootsCollection) {
+      await rootsCollection.updateOne(
+        {
+          _id: id,
+        },
+        {
+          $set: {
+            fileCount: fileCount,
+            lastUpdated: new Date(),
+          },
+        }
+      );
+    } else {
+      log.error(`Could not get rootsCollection`);
+    }
+    return undefined;
   }
 
   async query(queryString: string) {

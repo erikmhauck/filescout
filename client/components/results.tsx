@@ -15,7 +15,7 @@ export const Results = ({ results }: ResultsProps) => {
     <div>
       {results.length > 0 && (
         <div>
-          <p>Results:</p>
+          <h2>Results:</h2>
           <ul>
             {results.map((res) => (
               <li key={res._id}>{res.path}</li>
