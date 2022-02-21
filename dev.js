@@ -3,6 +3,11 @@ const path = require('path');
 const webpack = require('webpack');
 const webpackConfigClient = require('./webpack.config.client');
 const webpackConfigServer = require('./webpack.config.server');
+const connectionString = 'mongodb://localhost:27017/files';
+const testDirsRoot = 'test_data';
+
+process.env.CONNECTIONSTRING = connectionString;
+process.env.TARGETDIRSROOT = testDirsRoot;
 
 const compiler = webpack([
   {
@@ -41,7 +46,7 @@ compiler.watch({}, (err, stats) => {
   if (compiledSuccessfully && !node) {
     console.log('Starting Node.js ...');
     node = spawn(
-      'node',
+      `node`,
       ['--inspect', path.join(__dirname, 'dist/server.js')],
       {
         stdio: 'inherit',

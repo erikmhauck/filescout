@@ -6,7 +6,7 @@ import logger from '../logger';
 
 const log = logger('scanner-utils');
 
-export const rootOfAllScanDirs = '/scan';
+export const rootOfAllScanDirs = process.env.TARGETDIRSROOT || '/scan';
 
 export const getRootDirs = (rootOfAllScanDirs: string) => {
   const rootDirs = readdirSync(rootOfAllScanDirs, { withFileTypes: true })
