@@ -16,9 +16,12 @@ export const getRootDirs = (rootOfAllScanDirs: string) => {
 };
 
 export const scanFileContents = async (filePath: string) => {
-  return new Promise<string>((resolve, reject) => {
+  return new Promise<string | undefined>((resolve, reject) => {
     textract.fromFileWithPath(filePath, {}, (error: Error, text: string) => {
-      if (error) reject(error);
+      if (error) {
+        log.error(error);
+        resolve(undefined);
+      }
       resolve(text);
     });
   });

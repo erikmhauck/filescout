@@ -18,15 +18,17 @@ export const Results = ({ results }: ResultsProps) => {
   log.info(`Rendering ${results.length} search results!`);
 
   return (
-    <div style={{ height: 400, width: '100%' }}>
-      <DataGrid
-        rows={results}
-        columns={columns}
-        pageSize={5}
-        rowsPerPageOptions={[5]}
-        checkboxSelection
-        getRowId={(row) => row._id}
-      />
+    <div style={{ display: 'flex', height: '100%' }}>
+      <div style={{ flexGrow: 1 }}>
+        <DataGrid
+          rows={results}
+          columns={columns}
+          pageSize={10}
+          rowsPerPageOptions={[10]}
+          checkboxSelection
+          getRowId={(row) => row._id}
+        />
+      </div>
     </div>
   );
 };

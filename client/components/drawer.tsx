@@ -44,7 +44,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   justifyContent: 'flex-end',
 }));
 
-export function PersistentDrawer() {
+export const PersistentDrawer = () => {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
 
@@ -106,4 +106,4 @@ export function PersistentDrawer() {
       <DrawerHeader />
     </Box>
   );
-}
+};

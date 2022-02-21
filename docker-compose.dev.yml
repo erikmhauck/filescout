@@ -1,21 +1,21 @@
 version: '3.8'
 
 services:
- filescout:
-  build:
-   context: .
-  ports:
-   - 8080:8080
-   - 9229:9229
-  environment:
-   - SERVER_PORT=8080
-   - CONNECTIONSTRING=mongodb://mongo:27017/files
-   - NODE_ENV=dev
-  volumes:
-   - .:/usr/src/app/:rw
-   - ./test_data/test_1:/scan/test_1
-   - ./test_data/test_2:/scan/test_2
-  command: >
+  filescout:
+    build:
+      context: .
+    ports:
+      - 8080:8080
+      - 9229:9229
+    environment:
+      - SERVER_PORT=8080
+      - CONNECTIONSTRING=mongodb://mongo:27017/files
+      - NODE_ENV=dev
+    volumes:
+      - .:/usr/src/app/:rw
+      - ./test_data/test_1:/scan/test_1
+      - ./test_data/test_2:/scan/test_2
+    command: >
       sh -c '
       if test -d node_modules;
       then
@@ -26,13 +26,13 @@ services:
       yarn install && 
       /usr/local/bin/node ./dev.js
       '
- mongo:
-  image: mongo:4.2.8
-  ports:
-   - 27017:27017
-  volumes:
-   - mongodb:/data/db
-   - mongodb_config:/data/configdb
+  mongo:
+    image: mongo:4.2.8
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb:/data/db
+      - mongodb_config:/data/configdb
 volumes:
- mongodb:
- mongodb_config:
+  mongodb:
+  mongodb_config:

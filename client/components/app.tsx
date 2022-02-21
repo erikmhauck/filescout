@@ -1,4 +1,3 @@
-import { Container } from '@mui/material';
 import React from 'react';
 import logger from '../logger';
 import { PersistentDrawer } from './drawer';
@@ -9,11 +8,9 @@ const log = logger('app');
 export const App = () => {
   log.info(`rendering app`);
   return (
-    <>
+    <div style={{ height: '100%' }}>
       <PersistentDrawer />
-      <Container>
-        <SearchBar />
-      </Container>
-    </>
+      <SearchBar />
+    </div>
   );
 };
