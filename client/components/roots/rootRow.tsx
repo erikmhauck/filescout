@@ -1,6 +1,8 @@
+import { IconButton } from '@mui/material';
 import React, { Dispatch } from 'react';
 import { RootDocument } from '../../../common/dataModels';
 import logger from '../../logger';
+import RefreshIcon from '@mui/icons-material/Refresh';
 
 const log = logger('rootRow');
 
@@ -104,7 +106,9 @@ export const RootRow = ({ root }: RootRowProps) => {
         {timeSince(lastUpdated)} ago
       </p>
       {scanning && <p>scanning!</p>}
-      <button onClick={() => scanRoot(root)}>re-scan</button>
+      <IconButton onClick={() => scanRoot(root)}>
+        <RefreshIcon />
+      </IconButton>
     </div>
   );
 };
