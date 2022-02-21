@@ -50,7 +50,7 @@ export class Database {
     log.info(`Deleting all roots!!!`);
     const rootsCollection = await this.getRootsCollection();
     if (rootsCollection) {
-      rootsCollection.deleteMany({});
+      await rootsCollection.deleteMany({});
     } else {
       log.error(`Could not get rootsCollection`);
     }
@@ -60,7 +60,7 @@ export class Database {
     log.info(`Deleting all files!!!`);
     const filesCollection = await this.getFilesCollection();
     if (filesCollection) {
-      filesCollection.deleteMany({});
+      await filesCollection.deleteMany({});
     } else {
       log.error(`Could not get rootsCollection`);
     }
@@ -95,7 +95,7 @@ export class Database {
     log.info(`inserting file: ${documentToInsert}`);
     const filesCollection = await this.getFilesCollection();
     if (filesCollection) {
-      filesCollection.insertOne(documentToInsert);
+      await filesCollection.insertOne(documentToInsert);
     } else {
       log.error(`Could not get filesCollection`);
     }
@@ -105,7 +105,7 @@ export class Database {
     log.info(`inserting: ${documentsToInsert.length} files`);
     const filesCollection = await this.getFilesCollection();
     if (filesCollection) {
-      filesCollection.insertMany(documentsToInsert);
+      await filesCollection.insertMany(documentsToInsert);
     } else {
       log.error(`Could not get filesCollection`);
     }
@@ -115,7 +115,7 @@ export class Database {
     log.info(`deleting files with root: ${root.name}`);
     const filesCollection = await this.getFilesCollection();
     if (filesCollection) {
-      filesCollection.deleteMany({ root: root.name });
+      await filesCollection.deleteMany({ root: root.name });
     } else {
       log.error(`Could not get filesCollection`);
     }
@@ -130,8 +130,6 @@ export class Database {
       if (result) {
         log.info(`found ${JSON.stringify(result)}`);
         return result;
-      } else {
-        log.info(`${rootName} does not exist`);
       }
     } else {
       log.error(`Could not get rootsCollection`);

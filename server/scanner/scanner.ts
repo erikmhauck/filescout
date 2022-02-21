@@ -61,9 +61,11 @@ export class Scanner {
   }
 
   async init() {
+    log.info(`initializing scanner`);
+
     // !!!for debug!!!
     await this.db.deleteAll();
-    log.info(`initializing scanner`);
+
     const rootDirs = getRootDirs(rootOfAllScanDirs);
     log.info(
       `Found ${rootDirs.length} root directories in the ${rootOfAllScanDirs} folder`
@@ -71,7 +73,7 @@ export class Scanner {
 
     for (let i = 0; i < rootDirs.length; i += 1) {
       const currentRootDir = this.getRootDirName(rootDirs[i]);
-
+      log.info(`initializing ${currentRootDir}`);
       const root = await this.db.getRoot(currentRootDir);
       if (!root) {
         await this.scanPath(currentRootDir);

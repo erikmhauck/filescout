@@ -1,4 +1,11 @@
-import { IconButton } from '@mui/material';
+import {
+  Badge,
+  Box,
+  CircularProgress,
+  IconButton,
+  ListItem,
+  ListItemText,
+} from '@mui/material';
 import React, { Dispatch } from 'react';
 import { RootDocument } from '../../../common/dataModels';
 import logger from '../../logger';
@@ -73,25 +80,25 @@ const timeSince = (date: Date) => {
     let interval = seconds / 31536000;
 
     if (interval > 1) {
-      return Math.floor(interval) + ' years';
+      return Math.floor(interval) + 'y';
     }
     interval = seconds / 2592000;
     if (interval > 1) {
-      return Math.floor(interval) + ' months';
+      return Math.floor(interval) + 'm';
     }
     interval = seconds / 86400;
     if (interval > 1) {
-      return Math.floor(interval) + ' days';
+      return Math.floor(interval) + 'd';
     }
     interval = seconds / 3600;
     if (interval > 1) {
-      return Math.floor(interval) + ' hours';
+      return Math.floor(interval) + 'h';
     }
     interval = seconds / 60;
     if (interval > 1) {
-      return Math.floor(interval) + ' minutes';
+      return Math.floor(interval) + 'm';
     }
-    return Math.floor(seconds) + ' seconds';
+    return Math.floor(seconds) + 's';
   }
 };
 
@@ -100,15 +107,24 @@ export const RootRow = ({ root }: RootRowProps) => {
   log.info(`Rendering root row! ${JSON.stringify(root)}`);
 
   return (
-    <div>
-      <p>
-        <b>{root.name}</b> ({fileCount} files) - last updated{' '}
-        {timeSince(lastUpdated)} ago
-      </p>
-      {scanning && <p>scanning!</p>}
-      <IconButton onClick={() => scanRoot(root)}>
-        <RefreshIcon />
-      </IconButton>
-    </div>
+    <>
+      <ListItem
+        secondaryAction={
+          <Box sx={{ m: 1, position: 'relative' }}>
+            <Badge
+              invisible={scanning}
+              badgeContent={timeSince(lastUpdated)}
+              color='primary'
+            >
+              <IconButton onClick={() => scanRoot(root)}>
+                {scanning ? <CircularProgress /> : <RefreshIcon />}
+              </IconButton>
+            </Badge>
+          </Box>
+        }
+      >
+        <ListItemText primary={root.name} secondary={`${fileCount} files`} />
+      </ListItem>
+    </>
   );
 };

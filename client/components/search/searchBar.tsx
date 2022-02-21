@@ -1,4 +1,5 @@
-import { Button, Input } from '@mui/material';
+import { SearchTwoTone } from '@mui/icons-material';
+import { Container, Input, InputAdornment } from '@mui/material';
 import React from 'react';
 import { FileDocument } from '../../../common/dataModels';
 import logger from '../../logger';
@@ -37,17 +38,21 @@ export const SearchBar = ({}: SearchProps) => {
   const { results, executeSearch } = useSearch();
 
   return (
-    <div>
+    <Container>
       <Input
+        fullWidth
         onKeyPress={(e) =>
           e.key === 'Enter' ? executeSearch(queryString) : () => {}
         }
         onChange={(e) => setQueryString(e.target.value)}
         placeholder='search'
+        startAdornment={
+          <InputAdornment position='start'>
+            <SearchTwoTone />
+          </InputAdornment>
+        }
       />
-
-      <Button onClick={() => executeSearch(queryString)}>Search</Button>
       <Results results={results} />
-    </div>
+    </Container>
   );
 };

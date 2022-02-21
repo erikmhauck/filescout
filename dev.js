@@ -3,11 +3,9 @@ const path = require('path');
 const webpack = require('webpack');
 const webpackConfigClient = require('./webpack.config.client');
 const webpackConfigServer = require('./webpack.config.server');
-const connectionString = 'mongodb://localhost:27017/files';
-const testDirsRoot = 'test_data';
 
-process.env.CONNECTIONSTRING = connectionString;
-process.env.TARGETDIRSROOT = testDirsRoot;
+process.env.CONNECTIONSTRING = 'mongodb://localhost:27017/files';
+process.env.TARGETDIRSROOT = 'test_data';
 
 const compiler = webpack([
   {
