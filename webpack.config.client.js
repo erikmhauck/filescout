@@ -27,6 +27,10 @@ module.exports = {
           configFile: 'tsconfig.client.json',
         },
       },
+      {
+        test: /\.(sass|css|scss)$/,
+        use: ['style-loader', 'css-loader', 'sass-loader'],
+      },
     ],
   },
   target: 'web',

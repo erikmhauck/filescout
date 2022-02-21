@@ -1,3 +1,4 @@
+import { Button, Input } from '@mui/material';
 import React from 'react';
 import { FileDocument } from '../../../common/dataModels';
 import logger from '../../logger';
@@ -37,14 +38,15 @@ export const SearchBar = ({}: SearchProps) => {
 
   return (
     <div>
-      <h2>Search:</h2>
-      <input
+      <Input
         onKeyPress={(e) =>
           e.key === 'Enter' ? executeSearch(queryString) : () => {}
         }
         onChange={(e) => setQueryString(e.target.value)}
+        placeholder='search'
       />
-      <button onClick={() => executeSearch(queryString)}>search</button>
+
+      <Button onClick={() => executeSearch(queryString)}>Search</Button>
       <Results results={results} />
     </div>
   );
