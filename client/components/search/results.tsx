@@ -6,8 +6,9 @@ import { DataGrid, GridColDef } from '@mui/x-data-grid';
 const log = logger('results');
 
 const columns: GridColDef[] = [
-  { field: 'path', headerName: 'File' },
-  { field: 'contents', headerName: 'Contents' },
+  { field: 'root', headerName: 'Root', flex: 1 },
+  { field: 'path', headerName: 'File', flex: 1 },
+  { field: 'contents', headerName: 'Contents', flex: 1 },
 ];
 
 interface ResultsProps {

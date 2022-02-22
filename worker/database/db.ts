@@ -160,14 +160,18 @@ export class Database {
 
   async query(queryString: string) {
     const start = new Date().getMilliseconds();
-    log.info(`querying: ${queryString}`);
+    log.info(`QUERYING: ${queryString}`);
     const filesCollection = await this.getFilesCollection();
     if (filesCollection) {
       const queryRegex = { $regex: `.*${queryString}.*`, $options: 'i' };
       const query = {
         $or: [{ path: queryRegex }, { contents: queryRegex }],
       };
-      const result = await filesCollection.find(query).toArray();
+      const result = (await filesCollection.find(query).toArray()).map(
+        (item) => {
+          return { ...item, _id: item._id.toString() };
+        }
+      );
       const end = new Date().getMilliseconds() - start;
       log.info(`got: ${result.length} results in ${end} ms`);
       return result;

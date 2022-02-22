@@ -12,3 +12,10 @@ export interface RootDocument {
   fileCount: number;
   scanning: boolean;
 }
+
+export interface WorkerCommand {
+  action: 'scan' | 'search' | 'init' | 'getRoot';
+  query?: string;
+  path?: string;
+  root?: string;
+}

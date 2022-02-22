@@ -28,6 +28,7 @@ export const scanFileContents = async (filePath: string) => {
 };
 
 export const recursiveWalk = async (
+  root: string,
   targetPath: string,
   files_?: FileDocument[]
 ): Promise<FileDocument[]> => {
@@ -44,14 +45,14 @@ export const recursiveWalk = async (
       }
       if (isDir) {
         // recurse
-        await recursiveWalk(name, files_);
+        await recursiveWalk(root, name, files_);
       } else {
         const contents = await scanFileContents(name);
         // append to array
         const cleanedTargetPath = targetPath.replace(rootOfAllScanDirs, '');
         files_.push({
           path: join(cleanedTargetPath, files[i]),
-          root: cleanedTargetPath,
+          root: root,
           contents: contents,
         });
       }

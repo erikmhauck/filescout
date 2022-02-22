@@ -1,31 +1,53 @@
 import express from 'express';
-import { Database } from '../database/db';
-import { Scanner } from '../scanner/scanner';
+import { Worker } from 'worker_threads';
+import path from 'path';
+import { WorkerCommand } from '../../common/dataModels';
 
 const router = express.Router();
-const db = new Database(process.env.CONNECTIONSTRING);
-const scanner = new Scanner(db);
 
 router.use(express.json());
 
+const runService = (workerData: WorkerCommand) => {
+  return new Promise((resolve, reject) => {
+    const worker = new Worker(path.join(__dirname, 'worker.js'), {
+      workerData,
+    });
+    worker.on('message', resolve);
+    worker.on('error', reject);
+    worker.on('exit', (code) => {
+      if (code !== 0) reject(new Error(`stopped with  ${code} exit code`));
+    });
+  });
+};
+
+runService({ action: 'init' });
+
 router.post('/search', async (req, res) => {
-  const searchResult = await db.query(req.body.query);
-  res.send(JSON.stringify(searchResult));
+  const result = await runService({ action: 'search', query: req.body.query });
+  res.send(JSON.stringify(result));
 });
 
 router.post('/scan', function (req, res) {
-  scanner.scanPath(req.body.path);
+  runService({
+    action: 'scan',
+    query: req.body.path,
+  });
   res.sendStatus(200);
 });
 
-router.get('/roots', async (req, res) => {
-  const roots = await db.getAllRoots();
+router.get('/roots', async (_req, res) => {
+  const roots = await runService({
+    action: 'getRoot',
+  });
   console.log(JSON.stringify(roots));
   res.send(roots);
 });
 
 router.post('/root', async (req, res) => {
-  const root = await db.getRoot(req.body.name);
+  const root = await runService({
+    action: 'getRoot',
+    root: req.body.name,
+  });
   console.log(JSON.stringify(root));
   res.send(root);
 });

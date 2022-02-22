@@ -10,11 +10,10 @@ export class Scanner {
   db: Database;
   constructor(db: Database) {
     this.db = db;
-    this.init();
   }
 
   async walk(targetPath: string): Promise<FileDocument[]> {
-    return await recursiveWalk(join(rootOfAllScanDirs, targetPath));
+    return await recursiveWalk(targetPath, join(rootOfAllScanDirs, targetPath));
   }
 
   async scanPath(targetPath: string) {
