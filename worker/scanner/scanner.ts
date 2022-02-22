@@ -63,7 +63,7 @@ export class Scanner {
     log.info(`initializing scanner`);
 
     // !!!for debug!!!
-    await this.db.deleteAll();
+    // await this.db.deleteAll();
 
     const rootDirs = getRootDirs(rootOfAllScanDirs);
     log.info(

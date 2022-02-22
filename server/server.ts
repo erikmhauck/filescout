@@ -6,6 +6,7 @@ import ReactDOMServer from 'react-dom/server';
 import { App } from '../client/components/app';
 import logger from './logger';
 import api from './routes/api';
+import { executeWorkerAction } from './worker-interface';
 
 const log = logger('server');
 
@@ -33,4 +34,5 @@ server.get('/', (req, res) => {
 
 server.listen(port, () => {
   log.info(`Server running on http://localhost:${port}`);
+  executeWorkerAction({ action: 'init' });
 });

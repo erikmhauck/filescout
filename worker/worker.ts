@@ -13,16 +13,15 @@ if (parentPort) {
   const command = workerData as WorkerCommand;
   switch (command.action) {
     case 'scan': {
-      log.info(`scanning ${command.path}`);
       if (command.path) {
         scanner.scanPath(command.path);
       } else {
         log.info(`no path to scan provided`);
       }
+      break;
     }
     case 'search': {
       if (command.query) {
-        log.info(`searching ${command.query}`);
         db.query(command.query).then((res) => {
           if (parentPort) {
             parentPort.postMessage(res);
@@ -31,9 +30,11 @@ if (parentPort) {
       } else {
         log.info(`no search query provided`);
       }
+      break;
     }
     case 'init': {
       scanner.init();
+      break;
     }
     case 'getRoot': {
       if (command.root) {
@@ -49,6 +50,7 @@ if (parentPort) {
           }
         });
       }
+      break;
     }
   }
 }

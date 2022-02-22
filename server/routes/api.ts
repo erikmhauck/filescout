@@ -1,34 +1,20 @@
 import express from 'express';
-import { Worker } from 'worker_threads';
-import path from 'path';
-import { WorkerCommand } from '../../common/dataModels';
+import { executeWorkerAction } from '../worker-interface';
 
 const router = express.Router();
 
 router.use(express.json());
 
-const runService = (workerData: WorkerCommand) => {
-  return new Promise((resolve, reject) => {
-    const worker = new Worker(path.join(__dirname, 'worker.js'), {
-      workerData,
-    });
-    worker.on('message', resolve);
-    worker.on('error', reject);
-    worker.on('exit', (code) => {
-      if (code !== 0) reject(new Error(`stopped with  ${code} exit code`));
-    });
-  });
-};
-
-runService({ action: 'init' });
-
 router.post('/search', async (req, res) => {
-  const result = await runService({ action: 'search', query: req.body.query });
+  const result = await executeWorkerAction({
+    action: 'search',
+    query: req.body.query,
+  });
   res.send(JSON.stringify(result));
 });
 
 router.post('/scan', function (req, res) {
-  runService({
+  executeWorkerAction({
     action: 'scan',
     query: req.body.path,
   });
@@ -36,7 +22,7 @@ router.post('/scan', function (req, res) {
 });
 
 router.get('/roots', async (_req, res) => {
-  const roots = await runService({
+  const roots = await executeWorkerAction({
     action: 'getRoot',
   });
   console.log(JSON.stringify(roots));
@@ -44,7 +30,7 @@ router.get('/roots', async (_req, res) => {
 });
 
 router.post('/root', async (req, res) => {
-  const root = await runService({
+  const root = await executeWorkerAction({
     action: 'getRoot',
     root: req.body.name,
   });
