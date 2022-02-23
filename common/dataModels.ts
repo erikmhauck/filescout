@@ -13,6 +13,13 @@ export interface RootDocument {
   scanning: boolean;
 }
 
+export interface FileResult {
+  id: string;
+  root: string;
+  path: string;
+  context: string;
+}
+
 export interface WorkerCommand {
   action: 'scan' | 'search' | 'init' | 'getRoot';
   query?: string;

@@ -1,18 +1,17 @@
 import React from 'react';
-import { FileDocument } from '../../../common/dataModels';
+import { FileResult } from '../../../common/dataModels';
 import logger from '../../logger';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 
 const log = logger('results');
 
 const columns: GridColDef[] = [
-  { field: 'root', headerName: 'Root', flex: 1 },
   { field: 'path', headerName: 'File', flex: 1 },
-  { field: 'contents', headerName: 'Contents', flex: 1 },
+  { field: 'context', headerName: 'Contents', flex: 1 },
 ];
 
 interface ResultsProps {
-  results: FileDocument[];
+  results: FileResult[];
   loading: boolean;
 }
 
@@ -26,9 +25,7 @@ export const Results = ({ results, loading }: ResultsProps) => {
           loading={loading}
           rows={results}
           columns={columns}
-          pageSize={10}
-          rowsPerPageOptions={[10]}
-          getRowId={(row) => row._id}
+          pageSize={100}
         />
       </div>
     </div>

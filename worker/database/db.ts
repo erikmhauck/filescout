@@ -1,6 +1,7 @@
 import { MongoClient, ObjectId } from 'mongodb';
 import logger from '../logger';
 import { FileDocument, RootDocument } from '../../common/dataModels';
+import { postProcessResults } from './db_utils';
 
 const log = logger('database');
 
@@ -160,21 +161,20 @@ export class Database {
 
   async query(queryString: string) {
     const start = new Date().getMilliseconds();
-    log.info(`QUERYING: ${queryString}`);
+    log.info(`querying: ${queryString}`);
     const filesCollection = await this.getFilesCollection();
     if (filesCollection) {
       const queryRegex = { $regex: `.*${queryString}.*`, $options: 'i' };
       const query = {
         $or: [{ path: queryRegex }, { contents: queryRegex }],
       };
-      const result = (await filesCollection.find(query).toArray()).map(
-        (item) => {
-          return { ...item, _id: item._id.toString() };
-        }
-      );
+      const result = (await filesCollection
+        .find(query)
+        .toArray()) as FileDocument[];
       const end = new Date().getMilliseconds() - start;
       log.info(`got: ${result.length} results in ${end} ms`);
-      return result;
+      const processedResults = postProcessResults(queryString, result);
+      return processedResults;
     } else {
       log.error(`Could not get filesCollection`);
     }
