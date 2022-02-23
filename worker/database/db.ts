@@ -2,6 +2,7 @@ import { MongoClient, ObjectId } from 'mongodb';
 import logger from '../logger';
 import { FileDocument, RootDocument } from '../../common/dataModels';
 import { postProcessResults } from './db_utils';
+import { performance } from 'perf_hooks';
 
 const log = logger('database');
 
@@ -160,7 +161,7 @@ export class Database {
   }
 
   async query(queryString: string) {
-    const start = new Date().getMilliseconds();
+    const startTime = performance.now();
     log.info(`querying: ${queryString}`);
     const filesCollection = await this.getFilesCollection();
     if (filesCollection) {
@@ -171,8 +172,8 @@ export class Database {
       const result = (await filesCollection
         .find(query)
         .toArray()) as FileDocument[];
-      const end = new Date().getMilliseconds() - start;
-      log.info(`got: ${result.length} results in ${end} ms`);
+      const endTime = performance.now();
+      log.info(`got: ${result.length} results in ${endTime - startTime} ms`);
       const processedResults = postProcessResults(queryString, result);
       return processedResults;
     } else {
