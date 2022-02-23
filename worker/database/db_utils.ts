@@ -9,7 +9,7 @@ const clamp = (num: number, min: number, max: number) =>
 export const getContext = (query: string, contents: string) => {
   const maxDistance = 10;
 
-  const indexOfQuery = contents.indexOf(query);
+  const indexOfQuery = contents.toLowerCase().indexOf(query.toLowerCase());
   if (indexOfQuery !== -1) {
     const firstIndex = indexOfQuery - maxDistance;
     const lastIndex = indexOfQuery + query.length + maxDistance;
@@ -18,8 +18,10 @@ export const getContext = (query: string, contents: string) => {
     const clampedEnd = clamp(lastIndex, lastIndex, contents.length);
 
     const context = contents.substring(clampedStart, clampedEnd);
+    log.debug(`${clampedStart} - ${clampedEnd} - ${context}`);
     return context;
   } else {
+    log.debug(`${query} ---- ${contents}`);
     return '';
   }
 };

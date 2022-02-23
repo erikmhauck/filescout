@@ -15,6 +15,7 @@ const useSearch = () => {
 
   const executeSearch = async (query: string) => {
     setLoading(true);
+    setResults([]);
     const queryBody = JSON.stringify({ query: query });
     log.info(`searching: ${queryBody}`);
     const response = await fetch('/api/search', {
@@ -59,7 +60,7 @@ export const SearchBar = ({}: SearchProps) => {
           />
         </Grid>
         <Grid item xs={2}>
-          <Button>go</Button>
+          <Button onClick={() => executeSearch(queryString)}>go</Button>
         </Grid>
       </Grid>
       <Results results={results} loading={loading} />
