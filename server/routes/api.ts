@@ -16,7 +16,7 @@ router.post('/search', async (req, res) => {
 router.post('/scan', function (req, res) {
   executeWorkerAction({
     action: 'scan',
-    query: req.body.path,
+    path: req.body.path,
   });
   res.sendStatus(200);
 });

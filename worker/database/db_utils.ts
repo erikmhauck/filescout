@@ -7,7 +7,7 @@ const clamp = (num: number, min: number, max: number) =>
   Math.min(Math.max(num, min), max);
 
 export const getContext = (query: string, contents: string) => {
-  const maxDistance = 10;
+  const maxDistance = 100;
 
   const indexOfQuery = contents.toLowerCase().indexOf(query.toLowerCase());
   if (indexOfQuery !== -1) {

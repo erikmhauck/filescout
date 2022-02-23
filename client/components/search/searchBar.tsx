@@ -1,5 +1,5 @@
 import { SearchTwoTone } from '@mui/icons-material';
-import { Button, Grid, Input, InputAdornment } from '@mui/material';
+import { Button, Container, Grid, Input, InputAdornment } from '@mui/material';
 import React from 'react';
 import { FileResult } from '../../../common/dataModels';
 import logger from '../../logger';
@@ -42,7 +42,7 @@ export const SearchBar = ({}: SearchProps) => {
   const { results, executeSearch, loading } = useSearch();
 
   return (
-    <>
+    <Container maxWidth='md'>
       <Grid container>
         <Grid item xs={10}>
           <Input
@@ -64,6 +64,6 @@ export const SearchBar = ({}: SearchProps) => {
         </Grid>
       </Grid>
       <Results results={results} loading={loading} />
-    </>
+    </Container>
   );
 };
