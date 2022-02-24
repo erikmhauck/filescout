@@ -30,15 +30,6 @@ export class Database {
     }
   }
 
-  async getFilesCollection() {
-    await this.Connect();
-    if (this.client) {
-      const database = this.client.db('primary');
-      const filesCollection = database.collection('files');
-      return filesCollection;
-    }
-  }
-
   async getRootsCollection() {
     await this.Connect();
     if (this.client) {
@@ -49,7 +40,7 @@ export class Database {
   }
 
   async deleteAllRoots() {
-    log.info(`Deleting all roots!!!`);
+    log.info(`Deleting all roots!`);
     const rootsCollection = await this.getRootsCollection();
     if (rootsCollection) {
       await rootsCollection.deleteMany({});
@@ -58,25 +49,13 @@ export class Database {
     }
   }
 
-  async deleteAllFiles() {
-    log.info(`Deleting all files!!!`);
-    const filesCollection = await this.getFilesCollection();
-    if (filesCollection) {
-      await filesCollection.deleteMany({});
-    } else {
-      log.error(`Could not get rootsCollection`);
-    }
-  }
-
-  async deleteAll() {
-    await this.deleteAllFiles();
-    await this.deleteAllRoots();
-  }
-
   async getAllRoots() {
     const rootsCollection = await this.getRootsCollection();
     if (rootsCollection) {
-      return rootsCollection.find({}).toArray();
+      return (await rootsCollection.find({}).toArray()).map((res) => ({
+        ...res,
+        _id: res._id.toString(),
+      }));
     } else {
       log.error(`Could not get rootsCollection`);
     }
@@ -91,36 +70,6 @@ export class Database {
       log.error(`Could not get rootsCollection`);
     }
     return undefined;
-  }
-
-  async insertFile(documentToInsert: any) {
-    log.info(`inserting file: ${documentToInsert}`);
-    const filesCollection = await this.getFilesCollection();
-    if (filesCollection) {
-      await filesCollection.insertOne(documentToInsert);
-    } else {
-      log.error(`Could not get filesCollection`);
-    }
-  }
-
-  async insertManyFiles(documentsToInsert: FileDocument[]) {
-    log.info(`inserting: ${documentsToInsert.length} files`);
-    const filesCollection = await this.getFilesCollection();
-    if (filesCollection) {
-      await filesCollection.insertMany(documentsToInsert);
-    } else {
-      log.error(`Could not get filesCollection`);
-    }
-  }
-
-  async deleteAllFilesFromRoot(root: RootDocument) {
-    log.info(`deleting files with root: ${root.name}`);
-    const filesCollection = await this.getFilesCollection();
-    if (filesCollection) {
-      await filesCollection.deleteMany({ root: root.name });
-    } else {
-      log.error(`Could not get filesCollection`);
-    }
   }
 
   async getRoot(rootName: string) {
@@ -158,26 +107,5 @@ export class Database {
       log.error(`Could not get rootsCollection`);
     }
     return undefined;
-  }
-
-  async query(queryString: string) {
-    const startTime = performance.now();
-    log.info(`querying: ${queryString}`);
-    const filesCollection = await this.getFilesCollection();
-    if (filesCollection) {
-      const queryRegex = { $regex: `.*${queryString}.*`, $options: 'i' };
-      const query = {
-        $or: [{ path: queryRegex }, { contents: queryRegex }],
-      };
-      const result = (await filesCollection
-        .find(query)
-        .toArray()) as FileDocument[];
-      const endTime = performance.now();
-      log.info(`got: ${result.length} results in ${endTime - startTime} ms`);
-      const processedResults = postProcessResults(queryString, result);
-      return processedResults;
-    } else {
-      log.error(`Could not get filesCollection`);
-    }
   }
 }

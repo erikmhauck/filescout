@@ -3,6 +3,8 @@ import { Database } from '../database/db';
 import logger from '../logger';
 import { getRootDirs, recursiveWalk, rootOfAllScanDirs } from './scanner_utils';
 import { join } from 'path';
+import { resetIndex } from '../search/search_utils';
+import { deleteDocumentsFromRoot, loadDocuments } from '../search/search';
 
 const log = logger('scanner');
 
@@ -30,7 +32,7 @@ export class Scanner {
       // update the root if it exists
       await this.db.updateRoot(root._id, allFiles.length);
       // delete the files that were there before
-      await this.db.deleteAllFilesFromRoot(root);
+      await deleteDocumentsFromRoot(root.name);
     } else {
       // create a new root if it does not exist
       root = (await this.addNewRoot(
@@ -39,7 +41,7 @@ export class Scanner {
       )) as unknown as RootDocument;
     }
     // update the files matching the root
-    await this.db.insertManyFiles(allFiles);
+    await loadDocuments(allFiles);
   }
 
   async addNewRoot(rootDir: string, fileCount: number) {
@@ -59,11 +61,16 @@ export class Scanner {
     return rootDir.replace(`${rootOfAllScanDirs}/`, '');
   }
 
+  resetState = async () => {
+    await this.db.deleteAllRoots();
+    await resetIndex();
+  };
+
   async init() {
     log.info(`initializing scanner`);
 
     // !!!for debug!!!
-    // await this.db.deleteAll();
+    await this.resetState();
 
     const rootDirs = getRootDirs(rootOfAllScanDirs);
     log.info(

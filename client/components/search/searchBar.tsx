@@ -63,7 +63,7 @@ export const SearchBar = ({}: SearchProps) => {
           <Button onClick={() => executeSearch(queryString)}>go</Button>
         </Grid>
       </Grid>
-      <Results results={results} loading={loading} />
+      <Results results={results} loading={loading} query={queryString} />
     </Container>
   );
 };

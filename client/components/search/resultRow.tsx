@@ -3,12 +3,14 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import { FileResult } from '../../../common/dataModels';
+import Highlighter from 'react-highlight-words';
 
 interface IResultRowProps {
   result: FileResult;
+  query: string;
 }
 
-export default function ResultRow({ result }: IResultRowProps) {
+export default function ResultRow({ result, query }: IResultRowProps) {
   return (
     <Card
       sx={{
@@ -19,10 +21,18 @@ export default function ResultRow({ result }: IResultRowProps) {
     >
       <CardContent>
         <Typography variant='h5' gutterBottom>
-          {result.path}
+          <Highlighter
+            searchWords={[query]}
+            autoEscape={true}
+            textToHighlight={result.path}
+          />
         </Typography>
         <Typography variant='body2' color='text.secondary'>
-          {result.context}
+          <Highlighter
+            searchWords={[query]}
+            autoEscape={true}
+            textToHighlight={result.context || ''}
+          />
         </Typography>
       </CardContent>
     </Card>

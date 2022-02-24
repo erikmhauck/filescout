@@ -1,7 +1,9 @@
 import { workerData, parentPort } from 'worker_threads';
-import { WorkerCommand } from '../common/dataModels';
+import { FileResult, WorkerCommand } from '../common/dataModels';
 import { Database } from './database/db';
 import { Scanner } from './scanner/scanner';
+import { searchForString } from './search/search';
+
 import logger from './logger';
 
 const log = logger('worker');
@@ -22,7 +24,7 @@ if (parentPort) {
     }
     case 'search': {
       if (command.query) {
-        db.query(command.query).then((res) => {
+        searchForString(command.query).then((res: FileResult[]) => {
           if (parentPort) {
             parentPort.postMessage(res);
           }

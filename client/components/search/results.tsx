@@ -9,9 +9,10 @@ const log = logger('results');
 interface ResultsProps {
   results: FileResult[];
   loading: boolean;
+  query: string;
 }
 
-export const Results = ({ results, loading }: ResultsProps) => {
+export const Results = ({ results, loading, query }: ResultsProps) => {
   log.info(`Rendering ${results.length} search results!`);
 
   return (
@@ -20,7 +21,7 @@ export const Results = ({ results, loading }: ResultsProps) => {
       <List>
         {results.map((result) => (
           <div key={result.id}>
-            <ResultRow result={result} />
+            <ResultRow result={result} query={query} />
           </div>
         ))}
       </List>

@@ -17,9 +17,10 @@ RUN cp -a /tmp/node_modules /usr/src/app/
 
 COPY server/ ./server
 COPY client/ ./client
+COPY common/ ./common
+COPY worker/ ./worker
 
 RUN npm run build:server
-
 RUN npm run build:client
 # If you are building your code for production
 # RUN npm ci --only=production
