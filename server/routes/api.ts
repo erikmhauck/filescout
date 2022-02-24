@@ -29,6 +29,16 @@ router.get('/roots', async (_req, res) => {
   res.send(roots);
 });
 
+router.post('/filecontents', async (_req, res) => {
+  console.log(`fetching file contents of ${_req.body.id}`);
+  const file = await executeWorkerAction({
+    action: 'getFileContents',
+    id: _req.body.id,
+  });
+  console.log(JSON.stringify(file));
+  res.send(file);
+});
+
 router.post('/root', async (req, res) => {
   const root = await executeWorkerAction({
     action: 'getRoot',

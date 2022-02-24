@@ -1,7 +1,7 @@
 import React from 'react';
 import { FileResult } from '../../../common/dataModels';
 import logger from '../../logger';
-import { LinearProgress, List } from '@mui/material';
+import { Grid, LinearProgress } from '@mui/material';
 import ResultRow from './resultRow';
 
 const log = logger('results');
@@ -18,13 +18,13 @@ export const Results = ({ results, loading, query }: ResultsProps) => {
   return (
     <>
       {loading && <LinearProgress />}
-      <List>
+      <Grid container spacing={2}>
         {results.map((result) => (
-          <div key={result.id}>
+          <Grid item key={result.id} xs={12} md={6} lg={4}>
             <ResultRow result={result} query={query} />
-          </div>
+          </Grid>
         ))}
-      </List>
+      </Grid>
     </>
   );
 };

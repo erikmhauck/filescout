@@ -76,3 +76,29 @@ export const searchForString = async (queryString: string, offset = 0) => {
   }));
   return fileResults;
 };
+
+export const getFileContents = async (id: string) => {
+  log.info(`searching for ${id}`);
+  try {
+    const result = await client.search({
+      index: indexName,
+      type: indexType,
+      body: {
+        query: {
+          ids: {
+            values: [id],
+          },
+        },
+      },
+    });
+    const fileResults: FileResult[] = result.hits.hits.map((hit) => ({
+      id: hit._id,
+      root: (hit._source as any).root,
+      path: (hit._source as any).filename,
+      context: (hit._source as any).contents,
+    }));
+    return fileResults[0];
+  } catch (e) {
+    log.error(e);
+  }
+};

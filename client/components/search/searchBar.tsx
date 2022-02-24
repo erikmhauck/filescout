@@ -26,12 +26,12 @@ const useSearch = () => {
       body: queryBody,
     });
     const responseJson: FileResult[] = await response.json();
-    setLoading(false);
     if (responseJson.length > 0) {
       setResults(responseJson);
     } else {
       setResults([]);
     }
+    setLoading(false);
   };
 
   return { results, executeSearch, loading };
@@ -42,28 +42,31 @@ export const SearchBar = ({}: SearchProps) => {
   const { results, executeSearch, loading } = useSearch();
 
   return (
-    <Container maxWidth='md'>
-      <Grid container>
-        <Grid item xs={10}>
-          <Input
-            fullWidth
-            onKeyPress={(e) =>
-              e.key === 'Enter' ? executeSearch(queryString) : () => {}
-            }
-            onChange={(e) => setQueryString(e.target.value)}
-            placeholder='search'
-            startAdornment={
-              <InputAdornment position='start'>
-                <SearchTwoTone />
-              </InputAdornment>
-            }
-          />
+    <>
+      <Container maxWidth='md'>
+        <Grid container justifyContent='space-between'>
+          <Grid item xs={11}>
+            <Input
+              fullWidth
+              onKeyPress={(e) =>
+                e.key === 'Enter' ? executeSearch(queryString) : () => {}
+              }
+              onChange={(e) => setQueryString(e.target.value)}
+              placeholder='search'
+              startAdornment={
+                <InputAdornment position='start'>
+                  <SearchTwoTone />
+                </InputAdornment>
+              }
+            />
+          </Grid>
+          <Grid item xs={1}>
+            <Button onClick={() => executeSearch(queryString)}>go</Button>
+          </Grid>
         </Grid>
-        <Grid item xs={2}>
-          <Button onClick={() => executeSearch(queryString)}>go</Button>
-        </Grid>
-      </Grid>
+      </Container>
+
       <Results results={results} loading={loading} query={queryString} />
-    </Container>
+    </>
   );
 };

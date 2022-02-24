@@ -21,8 +21,9 @@ export interface FileResult {
 }
 
 export interface WorkerCommand {
-  action: 'scan' | 'search' | 'init' | 'getRoot';
+  action: 'scan' | 'search' | 'init' | 'getRoot' | 'getFileContents';
   query?: string;
   path?: string;
   root?: string;
+  id?: string;
 }

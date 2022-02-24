@@ -2,7 +2,7 @@ import { workerData, parentPort } from 'worker_threads';
 import { FileResult, WorkerCommand } from '../common/dataModels';
 import { Database } from './database/db';
 import { Scanner } from './scanner/scanner';
-import { searchForString } from './search/search';
+import { getFileContents, searchForString } from './search/search';
 
 import logger from './logger';
 
@@ -27,14 +27,23 @@ if (parentPort) {
       break;
     }
     case 'search': {
-      if (command.query) {
-        searchForString(command.query).then((res: FileResult[]) => {
+      searchForString(command.query || '').then((res: FileResult[]) => {
+        if (parentPort) {
+          parentPort.postMessage(res);
+        }
+      });
+
+      break;
+    }
+    case 'getFileContents': {
+      if (command.id) {
+        getFileContents(command.id).then((res: FileResult | undefined) => {
           if (parentPort) {
             parentPort.postMessage(res);
           }
         });
       } else {
-        log.info(`no search query provided`);
+        log.error(`no id provided`);
       }
       break;
     }
