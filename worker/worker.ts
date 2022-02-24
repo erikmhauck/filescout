@@ -16,7 +16,11 @@ if (parentPort) {
   switch (command.action) {
     case 'scan': {
       if (command.path) {
-        scanner.scanPath(command.path);
+        scanner.scanPath(command.path).then(() => {
+          if (parentPort) {
+            parentPort.postMessage(true);
+          }
+        });
       } else {
         log.info(`no path to scan provided`);
       }
@@ -35,7 +39,11 @@ if (parentPort) {
       break;
     }
     case 'init': {
-      scanner.init();
+      scanner.init().then(() => {
+        if (parentPort) {
+          parentPort.postMessage(true);
+        }
+      });
       break;
     }
     case 'getRoot': {

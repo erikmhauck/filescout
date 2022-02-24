@@ -2,7 +2,7 @@ const path = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 
-const isDevelop = true;
+const isDevelop = process.env.NODE_ENV === 'dev';
 
 module.exports = {
   name: 'client',

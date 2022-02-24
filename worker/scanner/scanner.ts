@@ -69,9 +69,10 @@ export class Scanner {
   async init() {
     log.info(`initializing scanner`);
 
-    // !!!for debug!!!
-    await this.resetState();
-
+    if (process.env.NODE_ENV !== 'production') {
+      // !!!for debug!!!
+      await this.resetState();
+    }
     const rootDirs = getRootDirs(rootOfAllScanDirs);
     log.info(
       `Found ${rootDirs.length} root directories in the ${rootOfAllScanDirs} folder`
