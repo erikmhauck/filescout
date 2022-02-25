@@ -1,6 +1,6 @@
 import { indexName, indexType, client } from './search_utils';
 import logger from '../logger';
-import { FileDocument, FileResult } from '../../common/dataModels';
+import { FileDocument } from '../../common/dataModels';
 
 const log = logger('es-load');
 
@@ -13,9 +13,7 @@ export async function loadDocuments(fileDocuments: FileDocument[]) {
     });
 
     bulkOps.push({
-      root: fileDocuments[i].root,
-      filename: fileDocuments[i].path,
-      contents: fileDocuments[i].contents,
+      ...fileDocuments[i],
     });
 
     if (i > 0 && i % 1000 === 0) {
@@ -46,7 +44,7 @@ export const deleteDocumentsFromRoot = async (rootToDelete: string) => {
 export const searchForString = async (queryString: string, offset = 0) => {
   const body = {
     from: offset,
-    _source: ['filename', 'root'],
+    _source: ['filename', 'root', 'fileType', 'fileSizeKB', 'lastModified'],
     query: {
       multi_match: {
         query: queryString,
@@ -68,10 +66,13 @@ export const searchForString = async (queryString: string, offset = 0) => {
     type: indexType,
     body,
   });
-  const fileResults: FileResult[] = results.hits.hits.map((hit) => ({
-    id: hit._id,
+  const fileResults: FileDocument[] = results.hits.hits.map((hit) => ({
+    _id: hit._id,
     root: (hit._source as any).root,
-    path: (hit._source as any).filename,
+    filename: (hit._source as any).filename,
+    fileType: (hit._source as any).fileType,
+    fileSizeKB: (hit._source as any).fileSizeKB,
+    lastModified: (hit._source as any).lastModified,
     context: (hit.highlight as any).contents?.join('\r\n'),
   }));
   return fileResults;
@@ -91,11 +92,14 @@ export const getFileContents = async (id: string) => {
         },
       },
     });
-    const fileResults: FileResult[] = result.hits.hits.map((hit) => ({
+    const fileResults: FileDocument[] = result.hits.hits.map((hit) => ({
       id: hit._id,
       root: (hit._source as any).root,
-      path: (hit._source as any).filename,
-      context: (hit._source as any).contents,
+      filename: (hit._source as any).filename,
+      fileType: (hit._source as any).fileType,
+      fileSizeKB: (hit._source as any).fileSizeKB,
+      lastModified: (hit._source as any).lastModified,
+      contents: (hit._source as any).contents,
     }));
     return fileResults[0];
   } catch (e) {

@@ -1,7 +1,7 @@
 import { SearchTwoTone } from '@mui/icons-material';
 import { Button, Container, Grid, Input, InputAdornment } from '@mui/material';
 import React from 'react';
-import { FileResult } from '../../../common/dataModels';
+import { FileDocument } from '../../../common/dataModels';
 import logger from '../../logger';
 import { Results } from './results';
 
@@ -10,7 +10,7 @@ interface SearchProps {}
 const log = logger('search');
 
 const useSearch = () => {
-  const [results, setResults] = React.useState<FileResult[]>([]);
+  const [results, setResults] = React.useState<FileDocument[]>([]);
   const [loading, setLoading] = React.useState<boolean>(false);
 
   const executeSearch = async (query: string) => {
@@ -25,7 +25,7 @@ const useSearch = () => {
       method: 'POST',
       body: queryBody,
     });
-    const responseJson: FileResult[] = await response.json();
+    const responseJson: FileDocument[] = await response.json();
     if (responseJson.length > 0) {
       setResults(responseJson);
     } else {

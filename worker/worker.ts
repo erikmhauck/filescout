@@ -1,5 +1,5 @@
 import { workerData, parentPort } from 'worker_threads';
-import { FileResult, WorkerCommand } from '../common/dataModels';
+import { FileDocument, WorkerCommand } from '../common/dataModels';
 import { Database } from './database/db';
 import { Scanner } from './scanner/scanner';
 import { getFileContents, searchForString } from './search/search';
@@ -27,7 +27,7 @@ if (parentPort) {
       break;
     }
     case 'search': {
-      searchForString(command.query || '').then((res: FileResult[]) => {
+      searchForString(command.query || '').then((res: FileDocument[]) => {
         if (parentPort) {
           parentPort.postMessage(res);
         }
@@ -37,7 +37,7 @@ if (parentPort) {
     }
     case 'getFileContents': {
       if (command.id) {
-        getFileContents(command.id).then((res: FileResult | undefined) => {
+        getFileContents(command.id).then((res: FileDocument | undefined) => {
           if (parentPort) {
             parentPort.postMessage(res);
           }

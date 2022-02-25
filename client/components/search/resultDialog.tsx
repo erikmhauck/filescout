@@ -1,17 +1,18 @@
 import * as React from 'react';
 import {
   Button,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
 } from '@mui/material';
-import { FileResult } from '../../../common/dataModels';
+import { FileDocument } from '../../../common/dataModels';
 import Highlighter from 'react-highlight-words';
 
 interface IResultDialogProps {
-  result: FileResult;
+  result: FileDocument;
   open: boolean;
   handleClose: () => any;
   query: string;
@@ -23,7 +24,8 @@ export const ResultDialog = ({
   handleClose,
   query,
 }: IResultDialogProps) => {
-  const [contents, setContents] = React.useState('Loading...');
+  const [contents, setContents] = React.useState('');
+  const [loading, setLoading] = React.useState(true);
   const descriptionElementRef = React.useRef<HTMLElement>(null);
   React.useEffect(() => {
     if (open) {
@@ -36,8 +38,13 @@ export const ResultDialog = ({
           'Content-Type': 'application/json',
         },
         method: 'POST',
-        body: JSON.stringify({ id: result.id }),
-      }).then((res) => res.json().then((res) => setContents(res.context)));
+        body: JSON.stringify({ id: result._id }),
+      }).then((res) =>
+        res.json().then((res) => {
+          setLoading(false);
+          setContents(res.contents);
+        })
+      );
     }
   }, [open]);
 
@@ -49,18 +56,23 @@ export const ResultDialog = ({
       aria-labelledby='scroll-dialog-title'
       aria-describedby='scroll-dialog-description'
     >
-      <DialogTitle id='scroll-dialog-title'>{result.path}</DialogTitle>
+      <DialogTitle id='scroll-dialog-title'>{result.filename}</DialogTitle>
       <DialogContent dividers>
         <DialogContentText
+          align={loading ? 'center' : 'inherit'}
           id='scroll-dialog-description'
           ref={descriptionElementRef}
           tabIndex={-1}
         >
-          <Highlighter
-            searchWords={[query]}
-            autoEscape={true}
-            textToHighlight={contents || ''}
-          />
+          {loading ? (
+            <CircularProgress />
+          ) : (
+            <Highlighter
+              searchWords={[query]}
+              autoEscape={true}
+              textToHighlight={contents || ''}
+            />
+          )}
         </DialogContentText>
       </DialogContent>
       <DialogActions>

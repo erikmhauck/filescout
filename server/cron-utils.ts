@@ -7,7 +7,7 @@ import { RootDocument } from '../common/dataModels';
 const log = logger('cron');
 
 const configRoot = process.env.CONFIGPATH || '/config';
-const defaultSchedule = '* * * * *';
+const defaultSchedule = '0 2 * * *';
 
 interface ScheduleConfig {
   path: string;

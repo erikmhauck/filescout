@@ -13,7 +13,12 @@ async function putFileMapping() {
     filename: { type: 'text' },
     contents: { type: 'text' },
     root: { type: 'text' },
+    fileType: { type: 'keyword' },
+    fileSizeKB: { type: 'text' },
+    lastModified: { type: 'text' },
   };
+  log.info(`setting mapping`);
+  log.info(JSON.stringify(schema, undefined, 2));
 
   return client.indices.putMapping({
     index: indexName,
@@ -23,10 +28,11 @@ async function putFileMapping() {
 }
 
 async function resetIndex() {
+  log.info(`deleting index`);
   if (await client.indices.exists({ index: indexName })) {
     await client.indices.delete({ index: indexName });
   }
-
+  log.info(`creating index`);
   await client.indices.create({ index: indexName });
   await putFileMapping();
 }

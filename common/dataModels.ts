@@ -1,8 +1,12 @@
 export interface FileDocument {
   _id?: any;
   root: string;
-  path: string;
+  filename: string;
+  fileType: string;
+  fileSizeKB: number;
+  lastModified: Date;
   contents?: string;
+  context?: string;
 }
 
 export interface RootDocument {
@@ -11,13 +15,6 @@ export interface RootDocument {
   lastUpdated: Date;
   fileCount: number;
   scanning: boolean;
-}
-
-export interface FileResult {
-  id: string;
-  root: string;
-  path: string;
-  context: string;
 }
 
 export interface WorkerCommand {

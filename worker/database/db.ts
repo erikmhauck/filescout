@@ -1,8 +1,5 @@
 import { MongoClient, ObjectId } from 'mongodb';
 import logger from '../logger';
-import { FileDocument, RootDocument } from '../../common/dataModels';
-import { postProcessResults } from './db_utils';
-import { performance } from 'perf_hooks';
 
 const log = logger('database');
 
@@ -25,7 +22,7 @@ export class Database {
     if (this.client != null) {
       return this.client;
     } else {
-      console.log(`getting new db connection`);
+      log.info(`getting new db connection`);
       this.client = await MongoClient.connect(this.connectionString);
     }
   }

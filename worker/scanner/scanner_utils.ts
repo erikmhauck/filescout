@@ -3,6 +3,7 @@ import { join } from 'path';
 import { FileDocument } from '../../common/dataModels';
 import * as textract from 'textract';
 import logger from '../logger';
+import mime from 'mime-types';
 
 const log = logger('scanner-utils');
 
@@ -38,8 +39,9 @@ export const recursiveWalk = async (
     for (let i = 0; i < files.length; i += 1) {
       const name = join(targetPath, files[i]);
       let isDir = false;
+      let stats = statSync(name);
       try {
-        isDir = statSync(name).isDirectory();
+        isDir = stats.isDirectory();
       } catch (e) {
         log.error(e);
       }
@@ -48,12 +50,16 @@ export const recursiveWalk = async (
         await recursiveWalk(root, name, files_);
       } else {
         const contents = await scanFileContents(name);
+        const mimeType = mime.lookup(name);
         // append to array
         const cleanedTargetPath = targetPath.replace(rootOfAllScanDirs, '');
         files_.push({
-          path: join(cleanedTargetPath, files[i]),
+          filename: join(cleanedTargetPath, files[i]),
           root: root,
           contents: contents,
+          fileType: mimeType || 'unknown',
+          fileSizeKB: stats.size,
+          lastModified: stats.mtime,
         });
       }
     }

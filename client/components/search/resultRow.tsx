@@ -2,13 +2,14 @@ import * as React from 'react';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import { FileResult } from '../../../common/dataModels';
+import { FileDocument } from '../../../common/dataModels';
 import Highlighter from 'react-highlight-words';
-import { CardActionArea } from '@mui/material';
+import { CardActionArea, CardActions } from '@mui/material';
 import { ResultDialog } from './resultDialog';
+import { ResultChips } from './resultChips';
 
 interface IResultRowProps {
-  result: FileResult;
+  result: FileDocument;
   query: string;
 }
 
@@ -23,14 +24,14 @@ export default function ResultRow({ result, query }: IResultRowProps) {
     >
       <CardActionArea onClick={() => setDialogOpen(true)}>
         <CardContent>
-          <Typography variant='h5' gutterBottom>
+          <Typography variant='h6' gutterBottom>
             <Highlighter
               searchWords={[query]}
               autoEscape={true}
-              textToHighlight={result.path}
+              textToHighlight={result.filename}
             />
           </Typography>
-          <Typography variant='body2' color='text.secondary'>
+          <Typography variant='body1' color='text.secondary'>
             <Highlighter
               searchWords={[query]}
               autoEscape={true}
@@ -38,6 +39,7 @@ export default function ResultRow({ result, query }: IResultRowProps) {
             />
           </Typography>
         </CardContent>
+        <ResultChips result={result} />
       </CardActionArea>
       <ResultDialog
         query={query}
