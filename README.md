@@ -4,6 +4,6 @@ indexes and parses files to be easily searchable
 
 # development
 
-1. delete `node_modules` if it exists (only needs to be done first time)
-1. run `docker compose -f docker-compose.dev.yml up` from the root of the project
-1. you now have hot-reload on client/server and a mongodb server running
+1. run `docker compose -f docker-compose.yml up` from the root of the project to start the required services
+1. stop the filescout container
+1. run `yarn start:dev` to start the webserver
