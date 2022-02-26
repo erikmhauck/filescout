@@ -4636,6 +4636,13 @@ mime-db@1.51.0:
   resolved "https://registry.yarnpkg.com/mime-db/-/mime-db-1.51.0.tgz#d9ff62451859b18342d960850dc3cfb77e63fb0c"
   integrity sha512-5y8A56jg7XVQx2mbv1lu49NR4dokRnhZYTtL+KGfaa27uq4pSTXkwQkFJl4pkRMyNFz/EtYDSkiiEHx3F7UN6g==
 
+mime-types-for-humans@1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/mime-types-for-humans/-/mime-types-for-humans-1.0.3.tgz#ce1c5299ee91f8c2716704ea2361464694b17aac"
+  integrity sha512-9g9p732/s+ChFgps7eGMI8gK7U3Ck2Vk12Eghs1AxBERa76gG0lDigxT1HxkpXCOdX06luoxLEWiK/LjgMinxQ==
+  dependencies:
+    mime-types "^2.1.34"
+
 mime-types@^2.1.12, mime-types@^2.1.27, mime-types@^2.1.34, mime-types@~2.1.24, mime-types@~2.1.34:
   version "2.1.34"
   resolved "https://registry.yarnpkg.com/mime-types/-/mime-types-2.1.34.tgz#5a712f9ec1503511a945803640fafe09d3793c24"

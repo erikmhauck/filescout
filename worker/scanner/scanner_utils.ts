@@ -3,7 +3,7 @@ import { join } from 'path';
 import { FileDocument } from '../../common/dataModels';
 import * as textract from 'textract';
 import logger from '../logger';
-import mime from 'mime-types';
+import mime from 'mime-types-for-humans';
 
 const log = logger('scanner-utils');
 

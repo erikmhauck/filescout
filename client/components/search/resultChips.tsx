@@ -8,7 +8,7 @@ interface IResultChipsProps {
   result: FileDocument;
 }
 
-const formatBytes = (bytes: number, decimals = 2) => {
+const formatBytes = (bytes: number, decimals = 0) => {
   if (bytes === 0) return '0 Bytes';
 
   const k = 1024;
