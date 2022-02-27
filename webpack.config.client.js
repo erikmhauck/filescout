@@ -7,7 +7,7 @@ const isDevelop = process.env.NODE_ENV === 'dev';
 module.exports = {
   name: 'client',
   entry: {
-    client: path.resolve(__dirname, 'client/client.tsx'),
+    client: path.resolve(__dirname, 'src', 'client', 'client.tsx'),
   },
   mode: isDevelop ? 'development' : 'production',
   output: {

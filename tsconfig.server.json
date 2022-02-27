@@ -1,5 +1,5 @@
 {
-  "include": ["server"],
+  "include": ["src/server"],
   "compilerOptions": {
     "module": "commonjs", // classic format that Node.js understands
     "esModuleInterop": true, // allow imports of modules in ES format
