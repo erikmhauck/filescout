@@ -1,17 +1,21 @@
 import { FileDocument, RootDocument } from '../../common/dataModels';
-import { Database } from '../database/db';
-import logger from '../logger';
+import { Database } from './db';
+import logger from '../../common/logger';
 import { getRootDirs, recursiveWalk, rootOfAllScanDirs } from './scanner_utils';
 import { join } from 'path';
-import { resetIndex } from '../search/search_utils';
-import { deleteDocumentsFromRoot, loadDocuments } from '../search/search';
+import {
+  deleteDocumentsFromRoot,
+  initializeIndex,
+  loadDocuments,
+  resetIndex,
+} from './search';
 
 const log = logger('scanner');
 
 export class Scanner {
   db: Database;
-  constructor(db: Database) {
-    this.db = db;
+  constructor() {
+    this.db = new Database(process.env.CONNECTIONSTRING);
   }
 
   async walk(targetPath: string): Promise<FileDocument[]> {
@@ -52,11 +56,6 @@ export class Scanner {
     });
   }
 
-  async reIndexIfNeeded(root: RootDocument) {
-    log.info(`checking if ${root.name} needs to be reindexed`);
-    log.info(root.lastUpdated);
-  }
-
   getRootDirName(rootDir: string) {
     return rootDir.replace(`${rootOfAllScanDirs}/`, '');
   }
@@ -68,7 +67,7 @@ export class Scanner {
 
   async init() {
     log.info(`initializing scanner`);
-
+    await initializeIndex();
     if (process.env.NODE_ENV !== 'production') {
       // !!!for debug!!!
       await this.resetState();
@@ -84,8 +83,6 @@ export class Scanner {
       const root = await this.db.getRoot(currentRootDir);
       if (!root) {
         await this.scanPath(currentRootDir);
-      } else {
-        await this.reIndexIfNeeded(root as unknown as RootDocument);
       }
     }
   }

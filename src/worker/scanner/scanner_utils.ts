@@ -1,9 +1,9 @@
 import { readdirSync, statSync } from 'fs';
 import { join } from 'path';
+import mime from 'mime-types-for-humans';
 import { FileDocument } from '../../common/dataModels';
 import * as textract from 'textract';
-import logger from '../logger';
-import mime from 'mime-types-for-humans';
+import logger from '../../common/logger';
 
 const log = logger('scanner-utils');
 
@@ -17,7 +17,7 @@ export const getRootDirs = (rootOfAllScanDirs: string) => {
 };
 
 export const scanFileContents = async (filePath: string) => {
-  return new Promise<string | undefined>((resolve, reject) => {
+  return new Promise<string | undefined>((resolve, _reject) => {
     textract.fromFileWithPath(filePath, {}, (error: Error, text: string) => {
       if (error) {
         log.error(error);
@@ -38,8 +38,8 @@ export const recursiveWalk = async (
     const files = readdirSync(targetPath);
     for (let i = 0; i < files.length; i += 1) {
       const name = join(targetPath, files[i]);
-      let isDir = false;
       let stats = statSync(name);
+      let isDir = false;
       try {
         isDir = stats.isDirectory();
       } catch (e) {

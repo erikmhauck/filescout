@@ -1,11 +1,48 @@
-import { indexName, indexType, client } from './search_utils';
-import logger from '../logger';
+import elasticsearch from 'elasticsearch';
+import logger from '../../common/logger';
 import { FileDocument } from '../../common/dataModels';
 
-const log = logger('es-load');
+const log = logger('search');
 
-export async function loadDocuments(fileDocuments: FileDocument[]) {
-  log.info(`loading ${fileDocuments.length} into es`);
+const indexName = 'files';
+const indexType = 'file';
+const host = process.env.ES_HOST || 'localhost';
+const port = 9200;
+const client = new elasticsearch.Client({ host: { host, port } });
+
+export const initializeIndex = async () => {
+  const exists = await client.indices.exists({ index: indexName });
+  if (!exists) {
+    log.info(`creating index`);
+    await client.indices.create({ index: indexName });
+
+    const schema = {
+      filename: { type: 'text' },
+      contents: { type: 'text' },
+      root: { type: 'text' },
+      fileType: { type: 'keyword' },
+      fileSizeKB: { type: 'text' },
+      lastModified: { type: 'text' },
+    };
+    log.info(`setting mapping`);
+    log.info(JSON.stringify(schema, undefined, 2));
+    return client.indices.putMapping({
+      index: indexName,
+      type: indexType,
+      body: { properties: schema },
+    });
+  }
+};
+
+export const resetIndex = async () => {
+  log.info(`deleting index`);
+  if (await client.indices.exists({ index: indexName })) {
+    await client.indices.delete({ index: indexName });
+  }
+};
+
+export const loadDocuments = async (fileDocuments: FileDocument[]) => {
+  log.info(`indexing ${fileDocuments.length} files`);
   let bulkOps = [];
   for (let i = 0; i < fileDocuments.length; i += 1) {
     bulkOps.push({
@@ -24,7 +61,7 @@ export async function loadDocuments(fileDocuments: FileDocument[]) {
   }
 
   await client.bulk({ body: bulkOps });
-}
+};
 
 export const deleteDocumentsFromRoot = async (rootToDelete: string) => {
   const body = {
@@ -79,7 +116,7 @@ export const searchForString = async (queryString: string, offset = 0) => {
 };
 
 export const getFileContents = async (id: string) => {
-  log.info(`searching for ${id}`);
+  log.info(`searching for document with id: ${id}`);
   try {
     const result = await client.search({
       index: indexName,

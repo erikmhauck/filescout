@@ -1,5 +1,5 @@
 import cron from 'node-cron';
-import logger from './logger';
+import logger from '../common/logger';
 import { readFileSync } from 'fs';
 import path from 'path';
 import { executeWorkerAction } from './worker-interface';

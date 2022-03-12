@@ -1,5 +1,5 @@
 import { MongoClient, ObjectId } from 'mongodb';
-import logger from '../logger';
+import logger from '../../common/logger';
 
 const log = logger('database');
 
@@ -22,7 +22,7 @@ export class Database {
     if (this.client != null) {
       return this.client;
     } else {
-      log.info(`getting new db connection`);
+      log.info(`connecting to mongodb...`);
       this.client = await MongoClient.connect(this.connectionString);
     }
   }
@@ -37,7 +37,7 @@ export class Database {
   }
 
   async deleteAllRoots() {
-    log.info(`Deleting all roots!`);
+    log.warn(`Deleting all roots!`);
     const rootsCollection = await this.getRootsCollection();
     if (rootsCollection) {
       await rootsCollection.deleteMany({});
@@ -59,7 +59,6 @@ export class Database {
   }
 
   async insertRoot(documentToInsert: any) {
-    log.info(`inserting root: ${JSON.stringify(documentToInsert)}`);
     const rootsCollection = await this.getRootsCollection();
     if (rootsCollection) {
       return await rootsCollection.insertOne(documentToInsert);
@@ -86,7 +85,6 @@ export class Database {
   }
 
   async updateRoot(id: ObjectId, fileCount: number) {
-    log.info(`Updating root with ${id} to have ${fileCount} files`);
     const rootsCollection = await this.getRootsCollection();
     if (rootsCollection) {
       await rootsCollection.updateOne(

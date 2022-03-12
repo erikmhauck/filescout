@@ -5,7 +5,7 @@ import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import { App } from '../client/components/app';
 import { setupCron } from './cron-utils';
-import logger from './logger';
+import logger from '../common/logger';
 import api from './routes/api';
 import { executeWorkerAction } from './worker-interface';
 
