@@ -1,10 +1,7 @@
 import { List } from '@mui/material';
 import React from 'react';
 import { RootDocument } from '../../../common/dataModels';
-import logger from '../../logger';
-import { RootRow } from './rootRow';
-
-const log = logger('roots');
+import { RootRow } from './RootRow';
 
 interface RootsProps {}
 
@@ -33,9 +30,6 @@ const useRoots = () => {
 
 export const Roots = ({}: RootsProps) => {
   const roots = useRoots();
-
-  log.info(`Rendering roots! ${JSON.stringify(roots)}`);
-
   return (
     <>
       {roots.length > 0 && (

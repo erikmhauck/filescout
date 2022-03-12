@@ -1,10 +1,7 @@
 import React from 'react';
 import { FileDocument } from '../../../common/dataModels';
-import logger from '../../logger';
 import { Grid, LinearProgress } from '@mui/material';
-import ResultRow from './resultRow';
-
-const log = logger('results');
+import ResultRow from './ResultRow';
 
 interface ResultsProps {
   results: FileDocument[];
@@ -13,8 +10,6 @@ interface ResultsProps {
 }
 
 export const Results = ({ results, loading, query }: ResultsProps) => {
-  log.info(`Rendering ${results.length} search results!`);
-
   return (
     <>
       {loading && <LinearProgress />}

@@ -11,65 +11,53 @@ const log = logger('worker');
 const db = new Database(process.env.CONNECTIONSTRING);
 const scanner = new Scanner(db);
 
-if (parentPort) {
-  const command = workerData as WorkerCommand;
-  switch (command.action) {
-    case 'scan': {
-      if (command.path) {
-        scanner.scanPath(command.path).then(() => {
-          if (parentPort) {
-            parentPort.postMessage(true);
-          }
-        });
-      } else {
-        log.info(`no path to scan provided`);
-      }
-      break;
-    }
-    case 'search': {
-      searchForString(command.query || '').then((res: FileDocument[]) => {
-        if (parentPort) {
-          parentPort.postMessage(res);
-        }
+const command = workerData as WorkerCommand;
+switch (command.action) {
+  case 'scan': {
+    if (command.path) {
+      scanner.scanPath(command.path).then(() => {
+        parentPort?.postMessage(true);
       });
-
-      break;
+    } else {
+      log.info(`no path to scan provided`);
     }
-    case 'getFileContents': {
-      if (command.id) {
-        getFileContents(command.id).then((res: FileDocument | undefined) => {
-          if (parentPort) {
-            parentPort.postMessage(res);
-          }
-        });
-      } else {
-        log.error(`no id provided`);
-      }
-      break;
-    }
-    case 'init': {
-      scanner.init().then(() => {
-        if (parentPort) {
-          parentPort.postMessage(true);
-        }
+    break;
+  }
+  case 'search': {
+    searchForString(command.query || '').then((res: FileDocument[]) => {
+      parentPort?.postMessage(res);
+    });
+    break;
+  }
+  case 'getFileContents': {
+    if (command.id) {
+      getFileContents(command.id).then((res: FileDocument | undefined) => {
+        parentPort?.postMessage(res);
       });
-      break;
+    } else {
+      log.error(`no id provided`);
     }
-    case 'getRoot': {
-      if (command.root) {
-        db.getRoot(command.root).then((res) => {
-          if (parentPort) {
-            parentPort.postMessage(res);
-          }
-        });
-      } else {
-        db.getAllRoots().then((res) => {
-          if (parentPort) {
-            parentPort.postMessage(res);
-          }
-        });
-      }
-      break;
+    break;
+  }
+  case 'init': {
+    scanner.init().then(() => {
+      parentPort?.postMessage(true);
+    });
+    break;
+  }
+  case 'getRoot': {
+    // if a root is specified, then get that one specifically
+    if (command.root) {
+      db.getRoot(command.root).then((res) => {
+        parentPort?.postMessage(res);
+      });
     }
+    // otherwise, return all of them
+    else {
+      db.getAllRoots().then((res) => {
+        parentPort?.postMessage(res);
+      });
+    }
+    break;
   }
 }

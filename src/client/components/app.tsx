@@ -1,16 +1,49 @@
 import React from 'react';
-import logger from '../logger';
-import { PersistentDrawer } from './drawer';
-import { SearchBar } from './search/searchBar';
+import { FileDocument } from '../../common/dataModels';
+import { RootsDrawer } from './Drawer/RootsDrawer';
+import { Results } from './Search/Results';
+import { SearchBar } from './Search/SearchBar';
 
-const log = logger('app');
+const useSearch = () => {
+  const [results, setResults] = React.useState<FileDocument[]>([]);
+  const [loading, setLoading] = React.useState<boolean>(false);
+
+  const executeSearch = async (query: string) => {
+    setLoading(true);
+    setResults([]);
+    const queryBody = JSON.stringify({ query: query });
+    const response = await fetch('/api/search', {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+      body: queryBody,
+    });
+    const responseJson: FileDocument[] = await response.json();
+    if (responseJson.length > 0) {
+      setResults(responseJson);
+    } else {
+      setResults([]);
+    }
+    setLoading(false);
+  };
+
+  return { results, executeSearch, loading };
+};
 
 export const App = () => {
-  log.info(`rendering app`);
+  const { results, executeSearch, loading } = useSearch();
+  const [queryString, setQueryString] = React.useState('');
+
   return (
     <div style={{ height: '100%' }}>
-      <PersistentDrawer />
-      <SearchBar />
+      <RootsDrawer />
+      <SearchBar
+        executeSearch={executeSearch}
+        queryString={queryString}
+        setQueryString={setQueryString}
+      />
+      <Results results={results} loading={loading} query={queryString} />
     </div>
   );
 };

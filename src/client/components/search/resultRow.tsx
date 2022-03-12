@@ -5,8 +5,8 @@ import Typography from '@mui/material/Typography';
 import { FileDocument } from '../../../common/dataModels';
 import Highlighter from 'react-highlight-words';
 import { CardActionArea, CardActions } from '@mui/material';
-import { ResultDialog } from './resultDialog';
-import { ResultChips } from './resultChips';
+import { ResultDialog } from './ResultDialog';
+import { ResultChips } from './ResultChips';
 
 interface IResultRowProps {
   result: FileDocument;

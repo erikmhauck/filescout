@@ -9,8 +9,7 @@ import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { Roots } from './roots/roots';
+import { Roots } from './Roots';
 
 const drawerWidth = 240;
 
@@ -44,7 +43,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   justifyContent: 'flex-end',
 }));
 
-export const PersistentDrawer = () => {
+export const RootsDrawer = () => {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
 
@@ -93,11 +92,7 @@ export const PersistentDrawer = () => {
       >
         <DrawerHeader>
           <IconButton onClick={handleDrawerClose}>
-            {theme.direction === 'ltr' ? (
-              <ChevronLeftIcon />
-            ) : (
-              <ChevronRightIcon />
-            )}
+            <ChevronLeftIcon />
           </IconButton>
         </DrawerHeader>
         <Divider />

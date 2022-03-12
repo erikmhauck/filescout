@@ -78,7 +78,6 @@ export const setupCron = async () => {
   schedules.push(...(await getDefaultSchedules(roots, schedules)));
   // group the schedules by cron so we can run them in series
   const groupedSchedules = groupBy(schedules, (s) => s.cron);
-  log.info(JSON.stringify(groupedSchedules));
   // setup the crontab
   for (let [cron, cronSchedules] of Object.entries(groupedSchedules)) {
     setUpSchedules(cron, cronSchedules);

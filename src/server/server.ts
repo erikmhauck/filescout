@@ -27,7 +27,7 @@ const manifest = fs.readFileSync(
 );
 const assets = JSON.parse(manifest);
 
-server.get('/', (req, res) => {
+server.get('/', (_req, res) => {
   log.info('serving /');
   const component = ReactDOMServer.renderToString(React.createElement(App));
   res.render('client', { assets, component });
