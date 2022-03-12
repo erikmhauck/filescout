@@ -4,7 +4,7 @@ import path from 'path';
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import { App } from '../client/components/app';
-import { setupCron } from './cron-utils';
+import { setupSchedules } from './schedules';
 import logger from '../common/logger';
 import api from './routes/api';
 import { executeWorkerAction } from './worker-interface';
@@ -36,6 +36,6 @@ server.get('/', (_req, res) => {
 server.listen(port, () => {
   log.info(`Server running on http://localhost:${port}`);
   executeWorkerAction({ action: 'init' }).then(() => {
-    setupCron();
+    setupSchedules();
   });
 });

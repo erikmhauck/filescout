@@ -1,3 +1,5 @@
+import React, { Dispatch } from 'react';
+
 import {
   Badge,
   Box,
@@ -6,10 +8,10 @@ import {
   ListItem,
   ListItemText,
 } from '@mui/material';
-import React, { Dispatch } from 'react';
+import RefreshIcon from '@mui/icons-material/Refresh';
+
 import { RootDocument } from '../../../common/dataModels';
 import { timeSince } from '../../../common/utils';
-import RefreshIcon from '@mui/icons-material/Refresh';
 
 interface RootRowProps {
   root: RootDocument;

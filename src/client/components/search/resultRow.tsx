@@ -2,11 +2,13 @@ import * as React from 'react';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import { FileDocument } from '../../../common/dataModels';
+import { CardActionArea } from '@mui/material';
+
 import Highlighter from 'react-highlight-words';
-import { CardActionArea, CardActions } from '@mui/material';
+
+import { FileDocument } from '../../../common/dataModels';
 import { ResultDialog } from './ResultDialog';
-import { ResultChips } from './ResultChips';
+import { ResultBadges } from './ResultBadges';
 
 interface IResultRowProps {
   result: FileDocument;
@@ -39,7 +41,7 @@ export default function ResultRow({ result, query }: IResultRowProps) {
             />
           </Typography>
         </CardContent>
-        <ResultChips result={result} />
+        <ResultBadges result={result} />
       </CardActionArea>
       <ResultDialog
         query={query}

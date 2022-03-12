@@ -8,8 +8,9 @@ import {
   DialogContentText,
   DialogTitle,
 } from '@mui/material';
-import { FileDocument } from '../../../common/dataModels';
 import Highlighter from 'react-highlight-words';
+
+import { FileDocument } from '../../../common/dataModels';
 
 interface IResultDialogProps {
   result: FileDocument;
@@ -18,21 +19,25 @@ interface IResultDialogProps {
   query: string;
 }
 
-export const ResultDialog = ({
-  result,
-  open,
-  handleClose,
-  query,
-}: IResultDialogProps) => {
-  const [contents, setContents] = React.useState('');
-  const [loading, setLoading] = React.useState(true);
-  const descriptionElementRef = React.useRef<HTMLElement>(null);
+const useFocusOn = (open: boolean) => {
+  const focusTargetRef = React.useRef<HTMLElement>(null);
   React.useEffect(() => {
     if (open) {
-      const { current: descriptionElement } = descriptionElementRef;
-      if (descriptionElement !== null) {
-        descriptionElement.focus();
+      const { current: elem } = focusTargetRef;
+      if (elem !== null) {
+        elem.focus();
       }
+    }
+  }, [open]);
+
+  return focusTargetRef;
+};
+
+const useFileContents = (open: boolean, result: FileDocument) => {
+  const [contents, setContents] = React.useState('');
+  const [loading, setLoading] = React.useState(true);
+  React.useEffect(() => {
+    if (open) {
       fetch('/api/filecontents', {
         headers: {
           'Content-Type': 'application/json',
@@ -47,6 +52,17 @@ export const ResultDialog = ({
       );
     }
   }, [open]);
+  return { contents, loading };
+};
+
+export const ResultDialog = ({
+  result,
+  open,
+  handleClose,
+  query,
+}: IResultDialogProps) => {
+  const { contents, loading } = useFileContents(open, result);
+  const focusTargetRef = useFocusOn(open);
 
   return (
     <Dialog
@@ -61,7 +77,7 @@ export const ResultDialog = ({
         <DialogContentText
           align={loading ? 'center' : 'inherit'}
           id='scroll-dialog-description'
-          ref={descriptionElementRef}
+          ref={focusTargetRef}
           tabIndex={-1}
         >
           {loading ? (

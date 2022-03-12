@@ -1,8 +1,8 @@
 import { readdirSync, statSync } from 'fs';
 import { join } from 'path';
+import * as textract from 'textract';
 import mime from 'mime-types-for-humans';
 import { FileDocument } from '../../common/dataModels';
-import * as textract from 'textract';
 import logger from '../../common/logger';
 
 const log = logger('scanner-utils');

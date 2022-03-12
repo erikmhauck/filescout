@@ -1,6 +1,7 @@
+import React, { Dispatch, SetStateAction } from 'react';
+
 import { SearchTwoTone } from '@mui/icons-material';
 import { Button, Container, Grid, Input, InputAdornment } from '@mui/material';
-import React, { Dispatch, SetStateAction } from 'react';
 
 interface SearchProps {
   queryString: string;

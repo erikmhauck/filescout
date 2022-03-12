@@ -1,6 +1,7 @@
 import React from 'react';
-import { FileDocument } from '../../../common/dataModels';
 import { Grid, LinearProgress } from '@mui/material';
+
+import { FileDocument } from '../../../common/dataModels';
 import ResultRow from './ResultRow';
 
 interface ResultsProps {

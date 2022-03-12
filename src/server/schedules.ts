@@ -1,9 +1,10 @@
 import cron from 'node-cron';
-import logger from '../common/logger';
 import { readFileSync } from 'fs';
 import path from 'path';
 import { executeWorkerAction } from './worker-interface';
 import { RootDocument } from '../common/dataModels';
+import logger from '../common/logger';
+
 const log = logger('cron');
 
 const configRoot = process.env.CONFIGPATH || '/config';
@@ -32,7 +33,7 @@ const getSchedulesFromConfig = (roots: RootDocument[]) => {
   return schedules;
 };
 
-const setUpSchedules = (cronString: string, schedules: ScheduleConfig[]) => {
+const activateSchedules = (cronString: string, schedules: ScheduleConfig[]) => {
   log.info(`scheduling ${schedules.length} tasks to be run at ${cronString}`);
   cron.schedule(cronString, async () => {
     for (let i = 0; i < schedules.length; i += 1) {
@@ -67,7 +68,7 @@ const groupBy = <T>(array: T[], predicate: (v: T) => string) =>
     return acc;
   }, {} as { [key: string]: T[] });
 
-export const setupCron = async () => {
+export const setupSchedules = async () => {
   const roots = (await executeWorkerAction({
     action: 'getRoot',
   })) as unknown as RootDocument[];
@@ -80,6 +81,6 @@ export const setupCron = async () => {
   const groupedSchedules = groupBy(schedules, (s) => s.cron);
   // setup the crontab
   for (let [cron, cronSchedules] of Object.entries(groupedSchedules)) {
-    setUpSchedules(cron, cronSchedules);
+    activateSchedules(cron, cronSchedules);
   }
 };
