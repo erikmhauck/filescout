@@ -7,6 +7,7 @@ import { SearchBar } from './Search/SearchBar';
 const useSearch = () => {
   const [results, setResults] = React.useState<FileDocument[]>([]);
   const [loading, setLoading] = React.useState<boolean>(false);
+  const [lastQuery, setLastQuery] = React.useState('');
 
   const executeSearch = async (query: string) => {
     setLoading(true);
@@ -22,17 +23,19 @@ const useSearch = () => {
     const responseJson: FileDocument[] = await response.json();
     if (responseJson.length > 0) {
       setResults(responseJson);
+      setLastQuery(query);
     } else {
       setResults([]);
+      setLastQuery('');
     }
     setLoading(false);
   };
 
-  return { results, executeSearch, loading };
+  return { results, executeSearch, loading, lastQuery };
 };
 
 export const App = () => {
-  const { results, executeSearch, loading } = useSearch();
+  const { results, executeSearch, loading, lastQuery } = useSearch();
   const [queryString, setQueryString] = React.useState('');
 
   return (
@@ -43,7 +46,7 @@ export const App = () => {
         queryString={queryString}
         setQueryString={setQueryString}
       />
-      <Results results={results} loading={loading} query={queryString} />
+      <Results results={results} loading={loading} query={lastQuery} />
     </div>
   );
 };
