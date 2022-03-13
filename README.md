@@ -5,9 +5,15 @@
 
 Indexes files and their contents for full-text search through a web-based (and mobile friendly!) UI.
 
-![screenshot of the desktop UI](/docs/UI-screenshot.png)
+![Animated gif of the desktop web interface](/docs/filescout-ui.gif)
 
-![Animated gif of the mobile UI](/docs/filescout-ui.gif)
+## Features
+
+- Full text search
+- Scheduled re-indexing
+- Custom re-indexing schedules via cron
+- On-demand reindexing through web UI
+- Mobile-first UI
 
 ## Installation
 
