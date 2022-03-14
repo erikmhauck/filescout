@@ -37,8 +37,8 @@ services:
       - ES_HOST=elasticsearch
       - NODE_ENV=production
     volumes:
-      - ./test_data/test_1:/scan/test_1 # 1st example of a path to scan
-      - ./test_data/test_2:/scan/test_2 # 2nd example of a path to scan
+      - ./sample_volumes/test_data/test_1:/scan/test_1 # 1st example of a path to scan
+      - ./sample_volumes/test_data/test_2:/scan/test_2 # 2nd example of a path to scan
     links:
       - elasticsearch
       - mongo

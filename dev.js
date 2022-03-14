@@ -3,8 +3,8 @@ const path = require('path');
 const webpack = require('webpack');
 
 process.env.CONNECTIONSTRING = 'mongodb://localhost:27017/roots';
-process.env.TARGETDIRSROOT = 'test_data';
-process.env.CONFIGPATH = 'test_config';
+process.env.TARGETDIRSROOT = 'sample_volumes/test_data';
+process.env.CONFIGPATH = 'sample_volumes/test_config';
 process.env.ES_HOST = 'localhost';
 process.env.NODE_ENV = 'dev';
 
