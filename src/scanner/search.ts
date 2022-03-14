@@ -1,6 +1,6 @@
 import elasticsearch from 'elasticsearch';
-import logger from '../../common/logger';
-import { FileDocument } from '../../common/dataModels';
+import logger from '../common/logger';
+import { FileDocument } from '../common/dataModels';
 
 const log = logger('search');
 

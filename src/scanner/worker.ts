@@ -1,7 +1,7 @@
 import { workerData, parentPort } from 'worker_threads';
 import { FileDocument, WorkerCommand } from '../common/dataModels';
-import { Scanner } from './scanner/scanner';
-import { getFileContents, searchForString } from './scanner/search';
+import { Scanner } from './scanner';
+import { getFileContents, searchForString } from './search';
 
 import logger from '../common/logger';
 

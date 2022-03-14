@@ -1,5 +1,5 @@
 import { MongoClient, ObjectId } from 'mongodb';
-import logger from '../../common/logger';
+import logger from '../common/logger';
 
 const log = logger('database');
 

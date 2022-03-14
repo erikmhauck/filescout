@@ -1,8 +1,8 @@
 import { join } from 'path';
-import { FileDocument, RootDocument } from '../../common/dataModels';
+import { FileDocument, RootDocument } from '../common/dataModels';
 import { Database } from './db';
-import logger from '../../common/logger';
-import { getRootDirs, recursiveWalk, rootOfAllScanDirs } from './scanner_utils';
+import logger from '../common/logger';
+import { getRootDirs, recursiveWalk, rootOfAllScanDirs } from './file_utils';
 import {
   deleteDocumentsFromRoot,
   initializeIndex,

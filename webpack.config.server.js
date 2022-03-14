@@ -6,7 +6,7 @@ module.exports = {
   name: 'server',
   entry: {
     server: path.resolve(__dirname, 'src', 'server', 'server.ts'),
-    worker: path.resolve(__dirname, 'src', 'worker', 'worker.ts'),
+    scanner: path.resolve(__dirname, 'src', 'scanner', 'worker.ts'),
   },
   mode: 'production',
   output: {

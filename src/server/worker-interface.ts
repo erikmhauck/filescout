@@ -3,7 +3,7 @@ import path from 'path';
 import { WorkerCommand } from '../common/dataModels';
 export const executeWorkerAction = (workerData: WorkerCommand) => {
   return new Promise((resolve, reject) => {
-    const worker = new Worker(path.join(__dirname, 'worker.js'), {
+    const worker = new Worker(path.join(__dirname, 'scanner.js'), {
       workerData,
     });
     worker.on('message', resolve);
