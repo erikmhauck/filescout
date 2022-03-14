@@ -1,34 +1,28 @@
 import { join } from 'path';
 import * as uuid from 'uuid';
-import { FileDocument, RootDocument } from '../common/dataModels';
-import { Roots } from './roots';
+import { RootDocument } from '../common/dataModels';
+import { RootsClient } from './roots';
 import logger from '../common/logger';
 import { getRootDirs, recursiveWalk, rootOfAllScanDirs } from './file_utils';
-import {
-  deleteDocumentsFromRoot,
-  initializeIndex,
-  loadDocuments,
-  resetIndex,
-} from './search';
+import { SearchClient } from './search';
 
 const log = logger('scanner');
 
-//searchForString
-//getFileContents
-
 export class Scanner {
-  rootsDB: Roots;
+  rootsClient: RootsClient;
+  searchClient: SearchClient;
   constructor() {
-    this.rootsDB = new Roots();
+    this.rootsClient = new RootsClient();
+    this.searchClient = new SearchClient();
   }
 
   async init() {
     log.info(`initializing index...`);
-    await initializeIndex();
+    await this.searchClient.initializeIndex();
     if (process.env.NODE_ENV !== 'production') {
       // !!!for debug!!!
-      this.rootsDB.deleteAllRoots();
-      await resetIndex();
+      this.rootsClient.deleteAllRoots();
+      await this.searchClient.resetIndex();
     }
     // get all of the root directories in the scan folder
     const rootDirs = getRootDirs(rootOfAllScanDirs);
@@ -39,7 +33,7 @@ export class Scanner {
     for (let i = 0; i < rootDirs.length; i += 1) {
       const currentRootDir = rootDirs[i].replace(`${rootOfAllScanDirs}/`, '');
       log.info(`initializing ${currentRootDir}`);
-      const root = this.rootsDB.getRoot(currentRootDir);
+      const root = this.rootsClient.getRoot(currentRootDir);
       if (!root) {
         await this.scanRoot(currentRootDir);
       }
@@ -47,7 +41,7 @@ export class Scanner {
   }
 
   async scanRoot(targetPath: string) {
-    let root = this.rootsDB.getRoot(targetPath) as RootDocument;
+    let root = this.rootsClient.getRoot(targetPath) as RootDocument;
     if (root && root.scanning) {
       log.info(`canceling scan of ${root.name}, is already scanning`);
       return;
@@ -62,12 +56,12 @@ export class Scanner {
 
     if (root && root._id) {
       // update the root if it exists
-      this.rootsDB.updateRoot(root._id, allFiles.length);
+      this.rootsClient.updateRoot(root._id, allFiles.length);
       // delete the files that were there before
-      await deleteDocumentsFromRoot(root.name);
+      await this.searchClient.deleteDocumentsFromRoot(root.name);
     } else {
       // create a new root if it does not exist
-      root = this.rootsDB.insertRoot({
+      root = this.rootsClient.insertRoot({
         _id: uuid.v4(),
         name: targetPath,
         lastUpdated: new Date(),
@@ -76,6 +70,6 @@ export class Scanner {
       });
     }
     // update the files matching the root
-    await loadDocuments(allFiles);
+    await this.searchClient.loadDocuments(allFiles);
   }
 }

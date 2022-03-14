@@ -5,7 +5,7 @@ const log = logger('database');
 
 const rootsPath = './roots.json';
 
-export class Roots {
+export class RootsClient {
   constructor() {
     if (!fs.existsSync(rootsPath)) {
       this.writeRootsToFile([]);
