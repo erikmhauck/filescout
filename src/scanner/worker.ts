@@ -50,15 +50,13 @@ switch (command.action) {
   case 'getRoot': {
     // if a root is specified, then get that one specifically
     if (command.root) {
-      scanner.db.getRoot(command.root).then((res) => {
-        parentPort?.postMessage(res);
-      });
+      const root = scanner.db.getRoot(command.root);
+      parentPort?.postMessage(root);
     }
     // otherwise, return all of them
     else {
-      scanner.db.getAllRoots().then((res) => {
-        parentPort?.postMessage(res);
-      });
+      const roots = scanner.db.getAllRoots();
+      parentPort?.postMessage(roots);
     }
     break;
   }

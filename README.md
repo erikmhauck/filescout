@@ -33,7 +33,6 @@ services:
       - 8080:8080
     environment:
       - SERVER_PORT=8080
-      - CONNECTIONSTRING=mongodb://mongo:27017/roots
       - ES_HOST=elasticsearch
       - NODE_ENV=production
     volumes:
@@ -41,22 +40,11 @@ services:
       - ./sample_volumes/test_data/test_2:/scan/test_2 # 2nd example of a path to scan
     links:
       - elasticsearch
-      - mongo
     depends_on:
       - elasticsearch
-      - mongo
     networks:
       - fsnet
-  # the database that holds scan information
-  mongo:
-    image: mongo:4.2.8
-    ports:
-      - 27017:27017
-    volumes:
-      - mongodb:/data/db
-      - mongodb_config:/data/configdb
-    networks:
-      - fsnet
+
   # the search index
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:6.1.1
@@ -73,8 +61,6 @@ services:
       - fsnet
 
 volumes:
-  mongodb:
-  mongodb_config:
   esdata:
 networks:
   fsnet:
@@ -131,5 +117,5 @@ volumes:
 From the root of the project run the following commands:
 
 1. `yarn install`
-1. `docker compose -f docker-compose.dev.yml up` to start the mongo and elasticsearch containers
+1. `docker compose -f docker-compose.dev.yml up` to start the elasticsearch container
 1. `yarn start:dev` to start the webserver in hot-reload mode

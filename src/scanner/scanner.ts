@@ -1,6 +1,7 @@
 import { join } from 'path';
+import * as uuid from 'uuid';
 import { FileDocument, RootDocument } from '../common/dataModels';
-import { Database } from './db';
+import { Roots } from './roots';
 import logger from '../common/logger';
 import { getRootDirs, recursiveWalk, rootOfAllScanDirs } from './file_utils';
 import {
@@ -13,9 +14,9 @@ import {
 const log = logger('scanner');
 
 export class Scanner {
-  db: Database;
+  db: Roots;
   constructor() {
-    this.db = new Database(process.env.CONNECTIONSTRING);
+    this.db = new Roots();
   }
 
   async walk(targetPath: string): Promise<FileDocument[]> {
@@ -34,25 +35,24 @@ export class Scanner {
 
     if (root && root._id) {
       // update the root if it exists
-      await this.db.updateRoot(root._id, allFiles.length);
+      this.db.updateRoot(root._id, allFiles.length);
       // delete the files that were there before
       await deleteDocumentsFromRoot(root.name);
     } else {
       // create a new root if it does not exist
-      root = (await this.addNewRoot(
-        targetPath,
-        allFiles.length
-      )) as unknown as RootDocument;
+      root = this.addNewRoot(targetPath, allFiles.length);
     }
     // update the files matching the root
     await loadDocuments(allFiles);
   }
 
-  async addNewRoot(rootDir: string, fileCount: number) {
-    return await this.db.insertRoot({
+  addNewRoot(rootDir: string, fileCount: number) {
+    return this.db.insertRoot({
+      _id: uuid.v4(),
       name: rootDir,
       lastUpdated: new Date(),
       fileCount: fileCount,
+      scanning: false,
     });
   }
 
@@ -61,7 +61,7 @@ export class Scanner {
   }
 
   resetState = async () => {
-    await this.db.deleteAllRoots();
+    this.db.deleteAllRoots();
     await resetIndex();
   };
 
@@ -80,7 +80,7 @@ export class Scanner {
     for (let i = 0; i < rootDirs.length; i += 1) {
       const currentRootDir = this.getRootDirName(rootDirs[i]);
       log.info(`initializing ${currentRootDir}`);
-      const root = await this.db.getRoot(currentRootDir);
+      const root = this.db.getRoot(currentRootDir);
       if (!root) {
         await this.scanPath(currentRootDir);
       }
