@@ -14,7 +14,7 @@ switch (command.action) {
   case 'scan': {
     // scan a path and add contents to index
     if (command.path) {
-      scanner.scanPath(command.path).then(() => {
+      scanner.scanRoot(command.path).then(() => {
         parentPort?.postMessage(true);
       });
     } else {
@@ -50,12 +50,12 @@ switch (command.action) {
   case 'getRoot': {
     // if a root is specified, then get that one specifically
     if (command.root) {
-      const root = scanner.db.getRoot(command.root);
+      const root = scanner.rootsDB.getRoot(command.root);
       parentPort?.postMessage(root);
     }
     // otherwise, return all of them
     else {
-      const roots = scanner.db.getAllRoots();
+      const roots = scanner.rootsDB.getAllRoots();
       parentPort?.postMessage(roots);
     }
     break;

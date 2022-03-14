@@ -13,77 +13,69 @@ import {
 
 const log = logger('scanner');
 
+//searchForString
+//getFileContents
+
 export class Scanner {
-  db: Roots;
+  rootsDB: Roots;
   constructor() {
-    this.db = new Roots();
+    this.rootsDB = new Roots();
   }
 
-  async walk(targetPath: string): Promise<FileDocument[]> {
-    return await recursiveWalk(targetPath, join(rootOfAllScanDirs, targetPath));
+  async init() {
+    log.info(`initializing index...`);
+    await initializeIndex();
+    if (process.env.NODE_ENV !== 'production') {
+      // !!!for debug!!!
+      this.rootsDB.deleteAllRoots();
+      await resetIndex();
+    }
+    // get all of the root directories in the scan folder
+    const rootDirs = getRootDirs(rootOfAllScanDirs);
+    log.info(
+      `Found ${rootDirs.length} root directories in the ${rootOfAllScanDirs} folder`
+    );
+    // scan the path now if it has never been indexed
+    for (let i = 0; i < rootDirs.length; i += 1) {
+      const currentRootDir = rootDirs[i].replace(`${rootOfAllScanDirs}/`, '');
+      log.info(`initializing ${currentRootDir}`);
+      const root = this.rootsDB.getRoot(currentRootDir);
+      if (!root) {
+        await this.scanRoot(currentRootDir);
+      }
+    }
   }
 
-  async scanPath(targetPath: string) {
-    let root = (await this.db.getRoot(targetPath)) as unknown as RootDocument;
+  async scanRoot(targetPath: string) {
+    let root = this.rootsDB.getRoot(targetPath) as RootDocument;
     if (root && root.scanning) {
       log.info(`canceling scan of ${root.name}, is already scanning`);
       return;
     }
     log.info(`indexing ${targetPath}`);
+
     // do the scan
-    const allFiles = await this.walk(targetPath);
+    const allFiles = await recursiveWalk(
+      targetPath,
+      join(rootOfAllScanDirs, targetPath)
+    );
 
     if (root && root._id) {
       // update the root if it exists
-      this.db.updateRoot(root._id, allFiles.length);
+      this.rootsDB.updateRoot(root._id, allFiles.length);
       // delete the files that were there before
       await deleteDocumentsFromRoot(root.name);
     } else {
       // create a new root if it does not exist
-      root = this.addNewRoot(targetPath, allFiles.length);
+      root = this.rootsDB.insertRoot({
+        _id: uuid.v4(),
+        name: targetPath,
+        lastUpdated: new Date(),
+        fileCount: allFiles.length,
+        scanning: false,
+      });
     }
     // update the files matching the root
     await loadDocuments(allFiles);
-  }
-
-  addNewRoot(rootDir: string, fileCount: number) {
-    return this.db.insertRoot({
-      _id: uuid.v4(),
-      name: rootDir,
-      lastUpdated: new Date(),
-      fileCount: fileCount,
-      scanning: false,
-    });
-  }
-
-  getRootDirName(rootDir: string) {
-    return rootDir.replace(`${rootOfAllScanDirs}/`, '');
-  }
-
-  resetState = async () => {
-    this.db.deleteAllRoots();
-    await resetIndex();
-  };
-
-  async init() {
-    log.info(`initializing scanner`);
-    await initializeIndex();
-    if (process.env.NODE_ENV !== 'production') {
-      // !!!for debug!!!
-      await this.resetState();
-    }
-    const rootDirs = getRootDirs(rootOfAllScanDirs);
-    log.info(
-      `Found ${rootDirs.length} root directories in the ${rootOfAllScanDirs} folder`
-    );
-
-    for (let i = 0; i < rootDirs.length; i += 1) {
-      const currentRootDir = this.getRootDirName(rootDirs[i]);
-      log.info(`initializing ${currentRootDir}`);
-      const root = this.db.getRoot(currentRootDir);
-      if (!root) {
-        await this.scanPath(currentRootDir);
-      }
-    }
   }
 }
