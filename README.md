@@ -3,7 +3,7 @@
 [![GitHub issues](https://img.shields.io/github/issues/erikmhauck/filescout)](https://github.com/erikmhauck/filescout/issues)
 [![GitHub license](https://img.shields.io/github/license/erikmhauck/filescout)](https://github.com/erikmhauck/filescout/blob/main/LICENSE)
 
-Indexes files and their contents for full-text search through a web-based (and mobile friendly!) UI.
+Indexes files and their contents for full-text search through a web-based UI.
 
 ![Animated gif of the desktop web interface](/docs/filescout-ui.gif)
 
@@ -17,9 +17,9 @@ Indexes files and their contents for full-text search through a web-based (and m
 
 ## Installation
 
-filescout leverages [docker volumes](https://docs.docker.com/storage/volumes/#use-a-volume-with-docker-compose) to add the desired paths to scan and index into a docker container. For a basic installation, `volumes` is the only section that requires configuration.
+### Quick start
 
-### Full docker-compose example
+filescout leverages [docker volumes](https://docs.docker.com/storage/volumes/#use-a-volume-with-docker-compose) to add the desired paths to scan and index into a docker container. For a basic installation, `volumes` is the only section that requires configuration.
 
 ```yaml
 version: '3.8'
@@ -37,9 +37,8 @@ services:
       - ES_HOST=elasticsearch
       - NODE_ENV=production
     volumes:
-      - ./test_data/test_1:/scan/test_1 # 1st example of a scan root
-      - ./test_data/test_2:/scan/test_2 # 2nd example of a scan root
-      - ./test_config:/config # not required -- store custom cron data for re-indexing
+      - ./test_data/test_1:/scan/test_1 # 1st example of a path to scan
+      - ./test_data/test_2:/scan/test_2 # 2nd example of a path to scan
     links:
       - elasticsearch
       - mongo
@@ -95,7 +94,7 @@ volumes:
 
 `scanPath1` is just an example, you can name it whatever makes the most sense to you. The required format is like this: `{pathToScan}:/scan/{volumeName}`
 
-In other words, anything that you attach to `/scan/` will be indexed recursively and full-text-searchable.
+In other words, anything that you attach to `/scan/` will be indexed recursively.
 
 ### Schedules
 
@@ -112,7 +111,7 @@ For example, if you want your paths named "test_1" and "test_2" to be scanned ev
 }
 ```
 
-1. Put `schedules.json` in a folder on your host machine (eg: `~/filescout/config`) and then add a docker volume to map that to `/config`
+2. Put `schedules.json` in a folder on your host machine (eg: `~/filescout/config`) and then add a docker volume to map that to `/config`
 
 ```yml
 volumes:
