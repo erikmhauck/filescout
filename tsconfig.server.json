@@ -13,6 +13,7 @@
     // enable strict type checking
     "strict": true,
     "strictNullChecks": true,
-    "noImplicitAny": true
+    "noImplicitAny": true,
+    "sourceMap": true
   }
 }

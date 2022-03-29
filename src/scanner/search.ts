@@ -47,7 +47,6 @@ export class SearchClient {
   };
 
   loadDocuments = async (fileDocuments: FileDocument[]) => {
-    log.info(`indexing ${fileDocuments.length} files`);
     let bulkOps = [];
     for (let i = 0; i < fileDocuments.length; i += 1) {
       bulkOps.push({
@@ -57,15 +56,12 @@ export class SearchClient {
       bulkOps.push({
         ...fileDocuments[i],
       });
-
-      if (i > 0 && i % 10000 === 0) {
-        await this.client.bulk({ body: bulkOps });
-        bulkOps = [];
-        log.info(`indexed ${i}/${fileDocuments.length} files`);
-      }
     }
+    if (bulkOps.length > 0) {
+      log.info(`added ${fileDocuments.length} files...`);
 
-    await this.client.bulk({ body: bulkOps });
+      await this.client.bulk({ body: bulkOps });
+    }
   };
 
   deleteDocumentsFromRoot = async (rootToDelete: string) => {

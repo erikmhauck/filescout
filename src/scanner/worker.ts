@@ -13,7 +13,7 @@ const executeCommand = async (command: WorkerCommand) => {
     case 'scan': {
       // scan a path and add contents to index
       if (command.path) {
-        await scanner.scanRoot(command.path);
+        await scanner.scanPath(command.path);
         parentPort?.postMessage(true);
       } else {
         log.info(`no path to scan provided`);
