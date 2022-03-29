@@ -1,4 +1,4 @@
-import { getRootDirs } from './file_utils';
+import { getRootDirs, scanFileContents } from './file_utils';
 import * as fs from 'fs';
 import * as textract from 'textract';
 
@@ -33,11 +33,19 @@ describe('getRootDirs', () => {
 });
 
 describe('scanFileContents', () => {
-  test('returns undefined if an error is thrown by textract', () => {});
+  test('returns undefined if an error is thrown by textract', async () => {
+    mockedTextract.fromFileWithPath.mockImplementation((file, opts, cb) =>
+      cb(new Error('foo'), 'bar')
+    );
+    const res = await scanFileContents('foo');
+    expect(res).toBeUndefined();
+  });
 
-  test('returns resolved value from textract', () => {});
-});
-
-describe('recursiveWalk', () => {
-  test('returns list of files in a tree', () => {});
+  test('returns resolved value from textract', async () => {
+    mockedTextract.fromFileWithPath.mockImplementation((file, opts, cb) =>
+      cb(undefined, 'bar')
+    );
+    const res = await scanFileContents('foo');
+    expect(res).toBe('bar');
+  });
 });

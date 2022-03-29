@@ -55,8 +55,8 @@ export const recursiveWalk = async (
         const cleanedTargetPath = targetPath.replace(rootOfAllScanDirs, '');
         files_.push({
           filename: join(cleanedTargetPath, files[i]),
-          root: root,
-          contents: contents,
+          root,
+          contents,
           fileType: mimeType || 'unknown',
           fileSizeKB: stats.size,
           lastModified: stats.mtime,
