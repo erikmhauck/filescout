@@ -74,7 +74,6 @@ export class Scanner {
     targetPath: string,
     totalFilesScanned = 0
   ) {
-    let recursedFileCount = 0;
     let currentFiles = [];
 
     try {
@@ -90,11 +89,12 @@ export class Scanner {
         }
         if (isDir) {
           // recurse
-          recursedFileCount = await this.recursivelyIndexFiles(
+          totalFilesScanned = await this.recursivelyIndexFiles(
             root,
             name,
             totalFilesScanned
           );
+          log.info(`recursed totalFilesScanned: ${totalFilesScanned}`);
         } else {
           const contents = await scanFileContents(name);
           const mimeType = mime.lookup(name);
@@ -112,9 +112,6 @@ export class Scanner {
             this.searchClient.loadDocuments(currentFiles);
             currentFiles = [];
           }
-          if (!totalFilesScanned) {
-            totalFilesScanned = 0;
-          }
           totalFilesScanned = totalFilesScanned + 1;
         }
       }
@@ -125,7 +122,7 @@ export class Scanner {
     if (currentFiles.length > 0) {
       this.searchClient.loadDocuments(currentFiles);
     }
-
-    return totalFilesScanned + recursedFileCount;
+    log.info(`totalFilesScanned: ${totalFilesScanned}`);
+    return totalFilesScanned;
   }
 }
