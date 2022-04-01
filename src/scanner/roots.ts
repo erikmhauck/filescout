@@ -38,11 +38,18 @@ export class RootsClient {
     return undefined;
   }
 
-  updateRoot(id: string, fileCount: number) {
+  updateRoot(id: string, fieldsToUpdate: Partial<RootDocument>) {
+    log.info(
+      `updating root ${id} with new fields: ${JSON.stringify(fieldsToUpdate)}`
+    );
     const roots = this.getAllRoots();
     if (roots) {
       const rootIndex = roots.findIndex((root) => root._id === id);
-      roots[rootIndex].fileCount = fileCount;
+      roots[rootIndex] = {
+        ...roots[rootIndex],
+        lastUpdated: new Date(),
+        ...fieldsToUpdate,
+      };
       roots[rootIndex].lastUpdated = new Date();
       this.writeRootsToFile(roots);
     } else {

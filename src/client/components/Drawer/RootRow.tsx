@@ -34,7 +34,7 @@ const checkIfStillScanning = (
     });
     const responseObj: RootDocument = await response.json();
 
-    if (!responseObj.scanning) {
+    if (responseObj.state !== 'scanning') {
       setScanning(false);
       setFileCount(responseObj.fileCount);
       setLastUpdated(responseObj.lastUpdated);
@@ -44,7 +44,7 @@ const checkIfStillScanning = (
 };
 
 const useScanRoot = (root: RootDocument) => {
-  const [scanning, setScanning] = React.useState(root.scanning);
+  const [scanning, setScanning] = React.useState(root.state === 'scanning');
   const [fileCount, setFileCount] = React.useState(root.fileCount);
   const [lastUpdated, setLastUpdated] = React.useState(root.lastUpdated);
 

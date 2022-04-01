@@ -1,6 +1,6 @@
 import elasticsearch from 'elasticsearch';
 import logger from '../common/logger';
-import { FileDocument } from '../common/dataModels';
+import { FileDocument, RootDocument } from '../common/dataModels';
 
 const log = logger('search');
 
@@ -64,14 +64,15 @@ export class SearchClient {
     }
   };
 
-  deleteDocumentsFromRoot = async (rootToDelete: string) => {
+  deleteDocumentsFromRoot = async (rootToDelete: RootDocument) => {
+    log.info(`deleting all documents from ${rootToDelete.name}`);
     await this.client.deleteByQuery({
       index: indexName,
       type: indexType,
       body: {
         query: {
           match: {
-            root: rootToDelete,
+            root: rootToDelete.name,
           },
         },
       },

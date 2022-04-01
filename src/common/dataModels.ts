@@ -14,7 +14,7 @@ export interface RootDocument {
   name: string;
   lastUpdated: Date;
   fileCount: number;
-  scanning: boolean;
+  state: 'scanning' | 'idle';
 }
 
 export interface WorkerCommand {

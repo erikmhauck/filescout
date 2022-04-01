@@ -23,12 +23,12 @@ export class Scanner {
 
   async init() {
     log.info(`initializing index...`);
-    await this.searchClient.initializeIndex();
     if (process.env.NODE_ENV !== 'production') {
       // !!!for debug!!!
       this.rootsClient.deleteAllRoots();
       await this.searchClient.resetIndex();
     }
+    await this.searchClient.initializeIndex();
     // get all of the root directories in the scan folder
     const rootDirs = getRootDirs(rootOfAllScanDirs);
     log.info(
@@ -45,8 +45,9 @@ export class Scanner {
           name: currentRootDir,
           lastUpdated: new Date(),
           fileCount: 0,
-          scanning: false,
+          state: 'idle',
         });
+        log.info(`inserted new root, scanning now`);
         await this.scanPath(currentRootDir);
       }
     }
@@ -54,19 +55,29 @@ export class Scanner {
 
   async scanPath(targetPath: string) {
     let root = this.rootsClient.getRoot(targetPath) as RootDocument;
-    if (root && root.scanning) {
-      log.info(`canceling scan of ${root.name}, is already scanning`);
-      return;
-    }
     if (!root) {
       log.error(`Failed to get root for ${targetPath}`);
+    } else if (root.state === 'scanning') {
+      log.info(`canceling scan of ${root.name}, is already scanning`);
+      return;
+    } else {
+      // remove the previously indexed files
+      await this.searchClient.deleteDocumentsFromRoot(root);
+      // set the root state to scanning
+      this.rootsClient.updateRoot(root._id, {
+        state: 'scanning',
+      });
+      // index all the files
+      log.info(`indexing ${root.name}`);
+      const totalFiles = await this.recursivelyIndexFiles(
+        targetPath,
+        join(rootOfAllScanDirs, targetPath)
+      );
+      this.rootsClient.updateRoot(root._id, {
+        fileCount: totalFiles,
+        state: 'idle',
+      });
     }
-    log.info(`indexing ${root.name}`);
-    const totalFiles = await this.recursivelyIndexFiles(
-      targetPath,
-      join(rootOfAllScanDirs, targetPath)
-    );
-    this.rootsClient.updateRoot(root._id, totalFiles);
   }
 
   private async recursivelyIndexFiles(
